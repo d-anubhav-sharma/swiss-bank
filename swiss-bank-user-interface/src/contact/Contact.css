@@ -1,0 +1,73 @@
+.contact {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+}
+
+.contact h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2.5em;
+}
+
+.contact-section {
+  margin-bottom: 30px;
+}
+
+.contact h2 {
+  font-size: 2em;
+  margin-bottom: 15px;
+}
+
+.social-media-list,
+.phone-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.social-media-list li,
+.phone-list li {
+  background: #f4f4f4;
+  margin: 5px 0;
+  padding: 10px;
+  border-left: 5px solid #007bff;
+}
+
+.social-media-list li a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback-form label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.feedback-form input,
+.feedback-form textarea {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1em;
+}
+
+.feedback-form button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.feedback-form button:hover {
+  background-color: #0056b3;
+}

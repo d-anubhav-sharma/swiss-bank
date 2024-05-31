@@ -1,0 +1,10 @@
+.username-status-sign {
+  position: absolute;
+  transform: translate(-30px);
+  font-size: 30px;
+}
+.password-status-sign {
+  position: absolute;
+  transform: translate(-30px);
+  font-size: 30px;
+}
