@@ -1,0 +1,7 @@
+{"properties": [
+  {
+    "name": "swiss.jwt.util.secret-hashing-key",
+    "type": "java.lang.String",
+    "description": "Hashing key for JWT token generator and extractor"
+  }
+]}
