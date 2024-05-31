@@ -79,3 +79,19 @@
 #kyc > div.react-tel-input > input {
   width: 100%;
 }
+
+.h2 {
+  font-size: 24px;
+  font-weight: 600;
+  padding-left: 40%;
+  flex-grow: 1;
+}
+
+.h3 {
+  font-size: 20px;
+  font-weight: 600;
+  flex-grow: 1;
+}
+.document-viewer-images {
+  height: 80px;
+}

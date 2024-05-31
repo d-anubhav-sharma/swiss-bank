@@ -3,6 +3,7 @@ package com.swiss.bank.user.service.entities;
 import java.util.Date;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.swiss.bank.user.service.definitions.Gender;
@@ -24,12 +25,13 @@ public class BasicInfo {
 	@Id
 	private String id;
 	@Nonnull
+	@Indexed(unique = true)
 	private String username;
 	private String firstName;
 	private String lastName;
 	private String fullName;
 	private String email;
-	private Date dateofBirth;
+	private Date dateOfBirth;
 	private int age;
 	private Gender gender;
 	private String phone;

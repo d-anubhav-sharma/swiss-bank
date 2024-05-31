@@ -3,6 +3,7 @@ package com.swiss.bank.user.service.entities;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.annotation.Nonnull;
@@ -21,6 +22,7 @@ public class Occupation {
 	@Id
 	private String id;
 	@Nonnull
+	@Indexed(unique = true)
 	private String username;
 	private List<Job> jobs;
 

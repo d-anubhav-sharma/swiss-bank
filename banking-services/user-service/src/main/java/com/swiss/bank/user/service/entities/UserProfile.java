@@ -36,6 +36,8 @@ public class UserProfile {
 	private Date lastLoginAt;
 	@DocumentReference
 	private Preferences preferences;
+	@DocumentReference
+	private Consent consent;
 	private boolean emailVerified;
 	private boolean governmentIdVerified;
 	private boolean dateofBirthVerified;

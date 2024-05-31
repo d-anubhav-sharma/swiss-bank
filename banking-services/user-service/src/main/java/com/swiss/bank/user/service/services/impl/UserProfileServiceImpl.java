@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.swiss.bank.user.service.entities.Address;
 import com.swiss.bank.user.service.entities.BasicInfo;
+import com.swiss.bank.user.service.entities.Consent;
 import com.swiss.bank.user.service.entities.Kyc;
 import com.swiss.bank.user.service.entities.Occupation;
 import com.swiss.bank.user.service.entities.Preferences;
@@ -13,6 +14,7 @@ import com.swiss.bank.user.service.entities.UserProfile;
 import com.swiss.bank.user.service.models.UpdateUserProfileRequest;
 import com.swiss.bank.user.service.repositories.AddressRepository;
 import com.swiss.bank.user.service.repositories.BasicInfoRepository;
+import com.swiss.bank.user.service.repositories.ConsentRepository;
 import com.swiss.bank.user.service.repositories.KycRepository;
 import com.swiss.bank.user.service.repositories.OccupationRepository;
 import com.swiss.bank.user.service.repositories.PreferenceRepository;
@@ -31,6 +33,7 @@ public class UserProfileServiceImpl implements UserProfileService{
 	OccupationRepository occupationRepository;
 	PreferenceRepository preferenceRepository;
 	AddressRepository addressRepository;
+	ConsentRepository consentRepository;
 	
 	public UserProfileServiceImpl(
 			UserProfileRepository userProfileRepository,
@@ -38,7 +41,8 @@ public class UserProfileServiceImpl implements UserProfileService{
 			BasicInfoRepository basicInfoRepository,
 			KycRepository kycRepository,
 			OccupationRepository occupationRepository,
-			PreferenceRepository preferenceRepository
+			PreferenceRepository preferenceRepository,
+			ConsentRepository consentRepository
 		) {
 		this.userProfileRepository = userProfileRepository;
 		this.addressRepository = addressRepository;
@@ -46,6 +50,7 @@ public class UserProfileServiceImpl implements UserProfileService{
 		this.kycRepository = kycRepository;
 		this.occupationRepository = occupationRepository;
 		this.preferenceRepository = preferenceRepository;
+		this.consentRepository = consentRepository;
 	}
 	
 	@Override
@@ -55,19 +60,21 @@ public class UserProfileServiceImpl implements UserProfileService{
 		Kyc kyc = updateUserProfileRequest.getKyc();
 		Occupation occupation = updateUserProfileRequest.getOccupation();
 		Preferences preference = DataUtil.getOrDefault(updateUserProfileRequest.getPreferences(), new Preferences());
+		Consent consent = DataUtil.getOrDefault(updateUserProfileRequest.getConsent(), new Consent());
 		address.setUsername(username);
 		basicInfo.setUsername(username);
 		kyc.setUsername(username);
 		occupation.setUsername(username);
 		preference.setUsername(username);
-	    Mono<Address> addressMono = addressRepository.save(address);
-	    Mono<BasicInfo> basicInfoMono = basicInfoRepository.save(basicInfo);
-	    Mono<Kyc> kycMono = kycRepository.save(kyc);
-	    Mono<Occupation> occupationMono = occupationRepository.save(occupation);
-	    Mono<Preferences> preferencesMono = preferenceRepository.save(preference);
+	    Mono<Address> addressMono = addressRepository.replace(address);
+	    Mono<BasicInfo> basicInfoMono = basicInfoRepository.replace(basicInfo);
+	    Mono<Kyc> kycMono = kycRepository.replace(kyc);
+	    Mono<Occupation> occupationMono = occupationRepository.replace(occupation);
+	    Mono<Preferences> preferencesMono = preferenceRepository.replace(preference);
+	    Mono<Consent> consentMono = consentRepository.replace(consent);
 	    return userProfileRepository.findById(DataUtil.getOrDefault(updateUserProfileRequest.getUserId(), ""))
 	            .defaultIfEmpty(UserProfile.builder().username(username).createdAt(new Date()).build())
-	            .flatMap(userProfile -> Mono.zip(addressMono, basicInfoMono, kycMono, occupationMono, preferencesMono)
+	            .flatMap(userProfile -> Mono.zip(addressMono, basicInfoMono, kycMono, occupationMono, preferencesMono, consentMono)
 	                    .flatMap(tuple -> {
 	                    	userProfile.setUsername(username);
 	                        userProfile.setAddress(tuple.getT1());
@@ -75,7 +82,8 @@ public class UserProfileServiceImpl implements UserProfileService{
 	                        userProfile.setKyc(tuple.getT3());
 	                        userProfile.setOccupation(tuple.getT4());
 	                        userProfile.setPreferences(tuple.getT5());
-	                        return userProfileRepository.save(userProfile);
+	                        userProfile.setConsent(tuple.getT6());
+	                        return userProfileRepository.replace(userProfile);
 	                    })
 	            );
 	}
@@ -88,8 +96,40 @@ public class UserProfileServiceImpl implements UserProfileService{
 
 	@Override
 	public Mono<UserProfile> getUserProfileByUsername(String username) {
+		Mono<BasicInfo> basicInfoMono = basicInfoRepository.findBasicInfoByUsername(username);
+		Mono<Kyc> kycMono = kycRepository.findKycByUsername(username);
+		Mono<Occupation> occupationMono = occupationRepository.findOccupationByUsername(username);
+		Mono<Preferences> preferenceMono = preferenceRepository.findPreferenceByUsername(username);
+		Mono<Address> addressMono = addressRepository.findAddressByUsername(username);
+		Mono<Consent> consentMono = consentRepository.findConsentByUsername(username);
+		
 		return userProfileRepository
-				.findByUsername(username);
+				.findByUsername(username)
+				.flatMap(userProfile -> Mono.zip(basicInfoMono, kycMono, occupationMono, preferenceMono, addressMono, consentMono)
+						.map(tuple -> {
+	                    	userProfile.setUsername(username);
+	                        userProfile.setAddress(tuple.getT5());
+	                        userProfile.setBasicInfo(tuple.getT1());
+	                        userProfile.setKyc(tuple.getT2());
+	                        userProfile.setOccupation(tuple.getT3());
+	                        userProfile.setPreferences(tuple.getT4());
+	                        userProfile.setConsent(tuple.getT6());
+	                        return userProfile;
+	                    }))
+				.defaultIfEmpty(blankUserProfile())
+				.log();
+	}
+
+	private UserProfile blankUserProfile() {
+		return UserProfile.builder()
+				.username("")
+				.address(new Address())
+				.basicInfo(new BasicInfo())
+				.kyc(new Kyc())
+				.occupation(new Occupation())
+				.preferences(new Preferences())
+				.consent(new Consent())
+				.build();
 	}
 
 }

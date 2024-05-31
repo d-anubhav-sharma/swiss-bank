@@ -12,4 +12,10 @@ public interface UserProfileRepository extends ReactiveMongoRepository<UserProfi
 
 	Mono<UserProfile> findByUsername(String username);
 
+
+	default Mono<UserProfile> replace(UserProfile userProfile){
+		return deleteByUsername(userProfile.getUsername()).then(save(userProfile));
+	}
+
+	Mono<Void> deleteByUsername(String username);
 }

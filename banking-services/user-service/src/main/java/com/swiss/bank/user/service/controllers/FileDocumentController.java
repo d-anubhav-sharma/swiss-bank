@@ -1,11 +1,15 @@
 package com.swiss.bank.user.service.controllers;
 
 import java.security.Principal;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -28,7 +32,16 @@ public class FileDocumentController {
 	public FileDocumentController(FileDocumentService fileDocumentService) {
 		this.fileDocumentService = fileDocumentService;
 	}
+	
+	@GetMapping(value = "/id/{id}")
+	public ResponseEntity<Mono<FileDocument>> fetchFileDocument(@PathVariable("id") String documentId){
+		return ResponseEntity.ok(fileDocumentService.findDocumentByid(documentId));
+	}
 
+	@PostMapping(value = "/idList")
+	public ResponseEntity<Mono<Map<String, FileDocument>>> fetchFileDocumentsByTitleIdMap(@RequestBody Map<String, String> titleDocumentIdMap ){
+		return ResponseEntity.ok(fileDocumentService.fetchFileDocumentsByTitleIdMap(titleDocumentIdMap));
+	}
 	@PostMapping(value = "/save", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Mono<FileDocument>> saveFileDocument(@RequestPart FilePart file,
 			@RequestParam(value = "category", required = true) String category,

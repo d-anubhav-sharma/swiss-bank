@@ -15,11 +15,13 @@ import com.swiss.bank.user.service.entities.UserProfile;
 import com.swiss.bank.user.service.models.UpdateUserProfileRequest;
 import com.swiss.bank.user.service.services.UserProfileService;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @RestController
 @RestControllerAdvice
 @RequestMapping("/user-profile")
+@Slf4j
 public class UserProfileController {
 	
 	UserProfileService userProfileService;
@@ -34,6 +36,7 @@ public class UserProfileController {
 		if(!updateUserProfileRequest.getBasicInfo().getUsername().isBlank()) {
 			username = updateUserProfileRequest.getBasicInfo().getUsername();
 		}
+		log.atInfo().log("updateUserProfileRequest: {}", updateUserProfileRequest);
 		return ResponseEntity.ok(userProfileService.saveUserProfile(updateUserProfileRequest, username));
 	}
 
