@@ -13,6 +13,7 @@ import Admin from "./admin/Admin";
 import AllUsersGrid from "./user-management/AllUsersGrid";
 import { setActiveContentPage } from "./store/slice";
 import UserProfile from "./user-management/user-profile/UserProfile";
+import ProgressItemsBar from "./user-message-box/ProgressItemsBar";
 const App = () => {
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
@@ -53,6 +54,7 @@ const App = () => {
   return (
     <div className="app-container">
       <UserMessageBox />
+      <ProgressItemsBar />
       <Navbar />
       <div className="content">
         <h1>Swiss Bank</h1>

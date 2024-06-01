@@ -2,16 +2,20 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./UserProfile.css";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { useDispatch, useSelector } from "react-redux";
+import { setAllProgressMessages } from "../../store/slice";
 
 const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
   const BANKING_USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
   const allRecognizedImages = ["jpg", "img", "png", "jpeg", "jfif"];
   const [allFetchedDocuments, setAllFetchedDocuments] = useState({
-    profilePic: {} as any,
-    addressProof: {} as any,
-    identityProof: {} as any,
-    personalPhoto: {} as any,
+    profilePic: null,
+    addressProof: null,
+    identityProof: null,
+    personalPhoto: null,
   });
+  const { allProgressMessages } = useSelector((state: any) => state.reducer);
+  const dispatch = useDispatch();
 
   const formatHumanReadable = (text: string) => {
     let readableText = text[0].toUpperCase();
@@ -23,7 +27,7 @@ const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
   };
 
   const renderFileData = (fileDocument: any) => {
-    if (!fileDocument?.fileData) return <div></div>;
+    if (!fileDocument?.fileData) return null;
     let fileNameSplitted = fileDocument.fileName.split(".");
     let fileExtension = fileNameSplitted[fileNameSplitted.length - 1];
     return (
@@ -48,12 +52,32 @@ const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
       </div>
     );
   };
-  const fetchUploadedDocuments = () => {
-    axios.post(`${BANKING_USER_SERVICE_BASE_URL}/file/idList`, fieldImageMap).then(({ data }: any) => {
-      setAllFetchedDocuments(data);
-    });
+
+  const fetchUploadedDocuments = async () => {
+    let id = Math.random() * 1000000;
+    dispatch(
+      setAllProgressMessages([
+        ...allProgressMessages,
+        {
+          messageId: id,
+          message: "fetching uploaded documents",
+        },
+      ])
+    );
+    try {
+      const response = await axios.post(`${BANKING_USER_SERVICE_BASE_URL}/file/idList`, fieldImageMap);
+      setAllFetchedDocuments(response.data);
+    } catch (error) {
+      console.error("Failed to fetch uploaded documents", error);
+    } finally {
+      dispatch(setAllProgressMessages(allProgressMessages.filter((message: any) => message.messageId !== id)));
+    }
   };
-  useEffect(() => fetchUploadedDocuments(), []);
+
+  useEffect(() => {
+    fetchUploadedDocuments();
+  }, []);
+
   return (
     <section title="Uploaded Documents View">
       <div style={{ display: "flex" }}>
@@ -63,10 +87,10 @@ const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
         </span>
       </div>
       <div style={{ display: "flex" }}>
-        {renderFileData(allFetchedDocuments.profilePic)}
-        {renderFileData(allFetchedDocuments.addressProof)}
-        {renderFileData(allFetchedDocuments.identityProof)}
-        {renderFileData(allFetchedDocuments.personalPhoto)}
+        {allFetchedDocuments.profilePic && renderFileData(allFetchedDocuments.profilePic)}
+        {allFetchedDocuments.addressProof && renderFileData(allFetchedDocuments.addressProof)}
+        {allFetchedDocuments.identityProof && renderFileData(allFetchedDocuments.identityProof)}
+        {allFetchedDocuments.personalPhoto && renderFileData(allFetchedDocuments.personalPhoto)}
       </div>
     </section>
   );

@@ -813,14 +813,16 @@ const UserProfile = () => {
           />
         </FormGroup>
       </section>
-      <UploadedDocuments
-        fieldImageMap={{
-          profilePic: profileData.basicInfo.profilePic,
-          identityProof: profileData.kyc.identityProof,
-          addressProof: profileData.kyc.addressProof,
-          personalPhoto: profileData.kyc.personalPhoto,
-        }}
-      />
+      {profileData.basicInfo.profilePic && (
+        <UploadedDocuments
+          fieldImageMap={{
+            profilePic: profileData.basicInfo.profilePic,
+            identityProof: profileData.kyc.identityProof,
+            addressProof: profileData.kyc.addressProof,
+            personalPhoto: profileData.kyc.personalPhoto,
+          }}
+        />
+      )}
       <button onClick={() => handleUserProfileUpdate()}>Submit</button>
     </div>
   );
