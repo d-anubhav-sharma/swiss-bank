@@ -27,7 +27,9 @@ const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
     let fileNameSplitted = fileDocument.fileName.split(".");
     let fileExtension = fileNameSplitted[fileNameSplitted.length - 1];
     return (
-      <div style={{ display: "flex", flexDirection: "column", margin: 20 }}>
+      <div
+        style={{ display: "flex", flexDirection: "column", margin: 20, width: 140, maxWidth: 140, overflow: "hidden" }}
+      >
         <a href={"data:image/png;base64," + fileDocument?.fileData} download={fileDocument.fileName}>
           <img
             alt={fileDocument.fileName}
@@ -52,7 +54,6 @@ const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
     });
   };
   useEffect(() => fetchUploadedDocuments(), []);
-  console.log(allFetchedDocuments, fieldImageMap);
   return (
     <section title="Uploaded Documents View">
       <div style={{ display: "flex" }}>

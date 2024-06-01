@@ -15,6 +15,7 @@ const slice = createSlice({
     activeContentPage: "about",
     loggedIn: null,
     loggedInUser: "",
+    allProgressMessages: {},
   },
   reducers: {
     setNavbarExpanded: (state, action) => {
@@ -41,6 +42,16 @@ const slice = createSlice({
     setLoggedInUser: (state, action) => {
       state.loggedInUser = action.payload;
     },
+    addProgressMessage: (state, action: any) => {
+      let { id, message } = action.payload;
+      state.allProgressMessages[id as keyof Object] = message;
+      state.allProgressMessages = { ...state.allProgressMessages };
+    },
+    removeProgressMessage: (state, action) => {
+      let { id } = action.payload;
+      delete state.allProgressMessages[id as keyof Object];
+      state.allProgressMessages = { ...state.allProgressMessages };
+    },
   },
 });
 
@@ -53,5 +64,7 @@ export const {
   setActiveContentPage,
   setLoggedIn,
   setLoggedInUser,
+  addProgressMessage,
+  removeProgressMessage,
 } = slice.actions;
 export default slice.reducer;

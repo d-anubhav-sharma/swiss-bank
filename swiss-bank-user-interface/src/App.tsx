@@ -16,9 +16,7 @@ import UserProfile from "./user-management/user-profile/UserProfile";
 const App = () => {
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
-  const { activeContentPage, isAdmin, loggedIn } = useSelector(
-    (state: any) => state.reducer
-  );
+  const { activeContentPage, isAdmin, loggedIn } = useSelector((state: any) => state.reducer);
   const updateAndRender = (targetPage: any) => {
     dispatch(setActiveContentPage(targetPage));
     switch (targetPage) {

@@ -1,13 +1,7 @@
 import MenuIcon from "@mui/icons-material/Menu";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setActiveContentPage,
-  setIsAdmin,
-  setLoggedIn,
-  setLoggedInUser,
-  setNavbarExpanded,
-} from "../store/slice";
+import { setActiveContentPage, setIsAdmin, setLoggedIn, setLoggedInUser, setNavbarExpanded } from "../store/slice";
 import checkIfStaff from "../utils/CheckIfStaff";
 import NavbarItemsMap from "../utils/Navbar";
 import "./Navbar.css";
@@ -18,15 +12,11 @@ import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import axios from "axios";
 
 const Navbar = () => {
-  const BANKING_USER_SERVICE_BASE_URL =
-    process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
-  const { navbarExpanded, isAdmin, activeContentPage, loggedIn } = useSelector(
-    (state: any) => state.reducer
-  );
+  const BANKING_USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
+  const { navbarExpanded, isAdmin, activeContentPage, loggedIn } = useSelector((state: any) => state.reducer);
   const dispatch = useDispatch();
   const getActiveNavbarItems = () => {
-    let activeItems =
-      NavbarItemsMap[activeContentPage] || NavbarItemsMap.mainNavabarItems;
+    let activeItems = NavbarItemsMap[activeContentPage] || NavbarItemsMap.mainNavabarItems;
     if (!loggedIn) {
       activeItems = activeItems.filter((item: any) => item.category != "user");
     }
@@ -49,16 +39,9 @@ const Navbar = () => {
       return (
         <ul>
           <li>
-            <button
-              className={`no-styled-button ${
-                navbarExpanded ? "" : "collapsed"
-              }`}
-              onClick={() => logout()}
-            >
+            <button className={`no-styled-button ${navbarExpanded ? "" : "collapsed"}`} onClick={() => logout()}>
               <LogoutIcon />
-              <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>
-                Logout
-              </span>
+              <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>Logout</span>
             </button>
           </li>
         </ul>
@@ -71,9 +54,7 @@ const Navbar = () => {
             onClick={() => dispatch(setActiveContentPage("login"))}
           >
             <LoginIcon />
-            <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>
-              Login
-            </span>
+            <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>Login</span>
           </button>
         </li>
         <li>
@@ -82,9 +63,7 @@ const Navbar = () => {
             onClick={() => dispatch(setActiveContentPage("register"))}
           >
             <AppRegistrationIcon />
-            <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>
-              Register
-            </span>
+            <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>Register</span>
           </button>
         </li>
       </ul>
@@ -113,29 +92,19 @@ const Navbar = () => {
 
   return (
     <div className={`navbar ${navbarExpanded ? "" : "collapsed"}`}>
-      <button
-        className="toggle-button"
-        onClick={() => dispatch(setNavbarExpanded(!navbarExpanded))}
-      >
+      <button className="toggle-button" onClick={() => dispatch(setNavbarExpanded(!navbarExpanded))}>
         <MenuIcon />
       </button>
-      <h2 className={`navbar-title ${navbarExpanded ? "" : "collapsed"}`}>
-        Swiss Bank{" "}
-        <span style={{ color: "transparent" }}>{activeContentPage}</span>
-      </h2>
+      <h2 className={`navbar-title ${navbarExpanded ? "" : "collapsed"}`}>Swiss Bank</h2>
       <ul>
         {getActiveNavbarItems().map((navbarItem: any) => (
           <li key={navbarItem.title} title={navbarItem.label}>
             <button
-              className={`no-styled-button ${
-                navbarExpanded ? "" : "collapsed"
-              }`}
+              className={`no-styled-button ${navbarExpanded ? "" : "collapsed"}`}
               onClick={() => dispatch(setActiveContentPage(navbarItem.title))}
             >
               {navbarItem.icon}
-              <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>
-                {navbarItem.label}
-              </span>
+              <span className={`nav-text ${navbarExpanded ? "" : "collapsed"}`}>{navbarItem.label}</span>
             </button>
           </li>
         ))}
@@ -143,9 +112,7 @@ const Navbar = () => {
       <hr className={`ruler ${navbarExpanded ? "" : "collapsed"}`}></hr>
       {getLoginOrRegisterItem()}
       <div className="footer">
-        <p className={`footer-text ${navbarExpanded ? "" : "collapsed"}`}>
-          © 2024 Swiss Bank
-        </p>
+        <p className={`footer-text ${navbarExpanded ? "" : "collapsed"}`}>© 2024 Swiss Bank</p>
       </div>
     </div>
   );
