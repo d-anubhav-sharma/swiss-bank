@@ -26,9 +26,14 @@ import com.swiss.bank.user.service.util.SwissConstants;
 public class WebSecurityConfig {
 
 	private static final List<String> ALLOWED_ORIGINS = Collections.unmodifiableList(
-			List.of("http://localhost:10000", "http://localhost:10001", "http://localhost:10002", "http://localhost:10003", "http://localhost:10004",
-					"http://localhost:10005", "http://localhost:10006", "http://localhost:10007", "https://www.google.com", "http://localhost:3000"));
-	private static final List<String> ALLOWED_METHODS = Collections.unmodifiableList(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+			List.of("http://localhost:10000", "http://localhost:10001", "http://localhost:10002",
+					"http://localhost:10003", "http://localhost:10004",
+					"http://localhost:10005", "http://localhost:10006", "http://localhost:10007",
+					"https://www.google.com", "http://localhost:3000",
+					"https://localhost:8443", "https://localhost:3000",
+					"https://localhost:443"));
+	private static final List<String> ALLOWED_METHODS = Collections
+			.unmodifiableList(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
 	private JwtRequestFilter jwtRequestFilter;
 
@@ -53,12 +58,13 @@ public class WebSecurityConfig {
 	SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity) {
 		return serverHttpSecurity
 				.csrf(CsrfSpec::disable)
+
 				.httpBasic(http -> http.authenticationEntryPoint(new NoPopupAuthenticationEntryPoint()))
 				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 				.authorizeExchange(exchange -> exchange
 						.pathMatchers(
-								"/auth/**", 
-								"/webjars/swagger-ui/index.html", 
+								"/auth/**",
+								"/webjars/swagger-ui/index.html",
 								"/webjars/swagger-ui/swagger-ui.css",
 								"/webjars/swagger-ui/index.css",
 								"/webjars/swagger-ui/swagger-ui-bundle.js",
@@ -66,7 +72,8 @@ public class WebSecurityConfig {
 								"/webjars/swagger-ui/swagger-initializer.js",
 								"/v3/api-docs/swagger-config",
 								"/webjars/swagger-ui/favicon-32x32.png",
-								"/v3/api-docs").permitAll()
+								"/v3/api-docs")
+						.permitAll()
 						.pathMatchers(HttpMethod.OPTIONS, "**").permitAll()
 						.pathMatchers("/admin/**", "/user/**").hasAuthority("STAFF")
 						.anyExchange().authenticated())

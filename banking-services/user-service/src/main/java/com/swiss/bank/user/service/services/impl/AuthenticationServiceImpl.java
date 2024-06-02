@@ -21,9 +21,11 @@ import com.swiss.bank.user.service.util.DataUtil;
 import com.swiss.bank.user.service.util.JwtTokenUtil;
 import com.swiss.bank.user.service.util.SwissConstants;
 
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Service
+@Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
 
 	ReactiveAuthenticationManager authenticationManager;
@@ -58,6 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 						DataUtil.getGrantedAuthoritiesFromRoles(user.getRoles())))
 			)
 			.doOnNext(auth -> {
+				log.atInfo().log("Generating and appending cookie: {}", auth.getPrincipal());
 				exchange.getResponse().addCookie(ResponseCookie
 						.from("auth_token",jwtTokenUtil.generateAuthToken(auth.getPrincipal().toString()))
 						.httpOnly(true)
