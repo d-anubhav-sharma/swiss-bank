@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  user-service:
+    build:
+      context: ./user-service
+      dockerfile: Dockerfile
+    ports:
+      - "10001:10001"
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+
+  swiss-bank-user-interface:
+    build:
+      context: ./swiss-bank-user-interface
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    depends_on:
+      - user-service
+    env_file:
+      - .env
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+
+volumes:
+  mongo-data:
