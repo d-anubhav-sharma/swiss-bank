@@ -31,7 +31,7 @@ public class WebSecurityConfig {
 					"http://localhost:10005", "http://localhost:10006", "http://localhost:10007",
 					"https://www.google.com", "http://localhost:3000",
 					"https://localhost:8443", "https://localhost:3000",
-					"https://localhost:443"));
+					"https://localhost:443", "https://localhost"));
 	private static final List<String> ALLOWED_METHODS = Collections
 			.unmodifiableList(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
@@ -72,10 +72,12 @@ public class WebSecurityConfig {
 								"/webjars/swagger-ui/swagger-initializer.js",
 								"/v3/api-docs/swagger-config",
 								"/webjars/swagger-ui/favicon-32x32.png",
+								"/test/giveAdminAccessToOwner",
 								"/v3/api-docs")
 						.permitAll()
-						.pathMatchers(HttpMethod.OPTIONS, "**").permitAll()
-						.pathMatchers("/admin/**", "/user/**").hasAuthority("STAFF")
+						.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.pathMatchers("/admin/**", "/user/**")
+						.hasAuthority("STAFF")
 						.anyExchange().authenticated())
 				.addFilterBefore(jwtRequestFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 				.formLogin(FormLoginSpec::disable)
