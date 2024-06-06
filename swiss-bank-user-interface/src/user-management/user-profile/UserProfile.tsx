@@ -30,23 +30,23 @@ const UserProfile = () => {
   const refreshUserProfile = () => {
     axios.get(`${BANKING_USER_SERVICE_BASE_URL}/user-profile/username/${loggedInUser}`).then(
       (userProfileResponse) => {
-        userProfileResponse.data.basicInfo.dateOfBirth = userProfileResponse.data.basicInfo.dateOfBirth.split("T")[0];
+        userProfileResponse.data.basicInfo.dateOfBirth = userProfileResponse.data.basicInfo.dateOfBirth?.split("T")[0];
         userProfileResponse.data.occupation = {
-          title0: userProfileResponse.data.occupation.jobs[0].title,
-          company0: userProfileResponse.data.occupation.jobs[0].company,
-          companyAddress0: userProfileResponse.data.occupation.jobs[0].companyAddress,
-          companySalary0: userProfileResponse.data.occupation.jobs[0].salary,
-          companyPincode0: userProfileResponse.data.occupation.jobs[0].pincode,
-          title1: userProfileResponse.data.occupation.jobs[1].title,
-          company1: userProfileResponse.data.occupation.jobs[1].company,
-          companyAddress1: userProfileResponse.data.occupation.jobs[1].companyAddress,
-          companySalary1: userProfileResponse.data.occupation.jobs[1].salary,
-          companyPincode1: userProfileResponse.data.occupation.jobs[1].pincode,
-          title2: userProfileResponse.data.occupation.jobs[2].title,
-          company2: userProfileResponse.data.occupation.jobs[2].company,
-          companyAddress2: userProfileResponse.data.occupation.jobs[2].companyAddress,
-          companySalary2: userProfileResponse.data.occupation.jobs[2].salary,
-          companyPincode2: userProfileResponse.data.occupation.jobs[2].pincode,
+          title0: userProfileResponse.data.occupation.jobs?.[0].title,
+          company0: userProfileResponse.data.occupation.jobs?.[0].company,
+          companyAddress0: userProfileResponse.data.occupation.jobs?.[0].companyAddress,
+          companySalary0: userProfileResponse.data.occupation.jobs?.[0].salary,
+          companyPincode0: userProfileResponse.data.occupation.jobs?.[0].pincode,
+          title1: userProfileResponse.data.occupation.jobs?.[1].title,
+          company1: userProfileResponse.data.occupation.jobs?.[1].company,
+          companyAddress1: userProfileResponse.data.occupation.jobs?.[1].companyAddress,
+          companySalary1: userProfileResponse.data.occupation.jobs?.[1].salary,
+          companyPincode1: userProfileResponse.data.occupation.jobs?.[1].pincode,
+          title2: userProfileResponse.data.occupation.jobs?.[2].title,
+          company2: userProfileResponse.data.occupation.jobs?.[2].company,
+          companyAddress2: userProfileResponse.data.occupation.jobs?.[2].companyAddress,
+          companySalary2: userProfileResponse.data.occupation.jobs?.[2].salary,
+          companyPincode2: userProfileResponse.data.occupation.jobs?.[2].pincode,
         };
         userProfileResponse.data.consent = {
           canSendBankingOffers: userProfileResponse.data.consent.canSendBankingOffers ? "on" : "off",

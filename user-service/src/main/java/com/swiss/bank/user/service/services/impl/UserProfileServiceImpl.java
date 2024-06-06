@@ -1,8 +1,10 @@
 package com.swiss.bank.user.service.services.impl;
 
+import java.security.Principal;
 import java.util.Date;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ServerWebExchange;
 
 import com.swiss.bank.user.service.entities.Address;
 import com.swiss.bank.user.service.entities.BasicInfo;
@@ -20,8 +22,10 @@ import com.swiss.bank.user.service.repositories.OccupationRepository;
 import com.swiss.bank.user.service.repositories.PreferenceRepository;
 import com.swiss.bank.user.service.repositories.UserProfileRepository;
 import com.swiss.bank.user.service.services.UserProfileService;
+import com.swiss.bank.user.service.services.UserService;
 import com.swiss.bank.user.service.util.DataUtil;
 
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -34,6 +38,7 @@ public class UserProfileServiceImpl implements UserProfileService{
 	PreferenceRepository preferenceRepository;
 	AddressRepository addressRepository;
 	ConsentRepository consentRepository;
+	UserService userService;
 	
 	public UserProfileServiceImpl(
 			UserProfileRepository userProfileRepository,
@@ -42,7 +47,8 @@ public class UserProfileServiceImpl implements UserProfileService{
 			KycRepository kycRepository,
 			OccupationRepository occupationRepository,
 			PreferenceRepository preferenceRepository,
-			ConsentRepository consentRepository
+			ConsentRepository consentRepository,
+			UserService userService
 		) {
 		this.userProfileRepository = userProfileRepository;
 		this.addressRepository = addressRepository;
@@ -51,6 +57,7 @@ public class UserProfileServiceImpl implements UserProfileService{
 		this.occupationRepository = occupationRepository;
 		this.preferenceRepository = preferenceRepository;
 		this.consentRepository = consentRepository;
+		this.userService = userService;
 	}
 	
 	@Override
@@ -130,6 +137,11 @@ public class UserProfileServiceImpl implements UserProfileService{
 				.preferences(new Preferences())
 				.consent(new Consent())
 				.build();
+	}
+
+	@Override
+	public Flux<UserProfile> findAllProfilesAllowedToUser(ServerWebExchange serverWebExchange, Principal principal) {
+		return userService.findAllUsers().flatMap(user -> getUserProfileByUsername(user.getUsername()));
 	}
 
 }

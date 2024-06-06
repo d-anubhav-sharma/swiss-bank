@@ -4,6 +4,7 @@ import "./UserProfile.css";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { useDispatch, useSelector } from "react-redux";
 import { setAllProgressMessages } from "../../store/slice";
+import { formatHumanReadable } from "../../utils/DataFormatter";
 
 const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
   const BANKING_USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
@@ -17,18 +18,9 @@ const UploadedDocuments = ({ fieldImageMap }: { fieldImageMap: any }) => {
   const { allProgressMessages } = useSelector((state: any) => state.reducer);
   const dispatch = useDispatch();
 
-  const formatHumanReadable = (text: string) => {
-    let readableText = text[0].toUpperCase();
-    for (let i = 1; i < text.length; i++) {
-      if (text[i].charCodeAt(0) < 91) readableText += " ";
-      readableText += text[i];
-    }
-    return readableText;
-  };
-
   const renderFileData = (fileDocument: any) => {
     if (!fileDocument?.fileData) return null;
-    let fileNameSplitted = fileDocument.fileName.split(".");
+    let fileNameSplitted = fileDocument.fileName?.split(".");
     let fileExtension = fileNameSplitted[fileNameSplitted.length - 1];
     return (
       <div

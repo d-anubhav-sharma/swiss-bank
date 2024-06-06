@@ -7,7 +7,7 @@ COPY package.json ./
 COPY package-lock.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build:docker
 
 # Use an official Nginx image to serve the built application
 FROM nginx:alpine

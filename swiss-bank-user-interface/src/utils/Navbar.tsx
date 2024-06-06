@@ -9,9 +9,26 @@ import KeyIcon from "@mui/icons-material/Key";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
+const ProfileNavbarItems = [
+  {
+    title: "userprofile",
+    label: "Profile",
+    icon: <AccountCircleIcon className="icon" />,
+    target: "/user-profile",
+    category: "user",
+  },
+  {
+    title: "back",
+    label: "Back",
+    icon: <ArrowBackIcon className="icon" />,
+    target: "/back",
+    category: "user",
+  },
+];
+
 const MainNavbarItems = [
   {
-    title: "user-profile",
+    title: "userprofile",
     label: "Profile",
     icon: <AccountCircleIcon className="icon" />,
     target: "/user-profile",
@@ -94,6 +111,7 @@ const NavbarItemsMap: any = {
   users: AdminNavbarItems,
   approve: AdminNavbarItems,
   access: AdminNavbarItems,
+  userprofile: ProfileNavbarItems,
 };
 
 export default NavbarItemsMap;

@@ -47,7 +47,7 @@ const App = () => {
         return isAdmin ? <Admin /> : updateAndRender("login");
       case "users":
         return isAdmin ? <AllUsersGrid /> : updateAndRender("home");
-      case "user-profile":
+      case "userprofile":
         return loggedIn ? <UserProfile /> : updateAndRender("login");
     }
   };
