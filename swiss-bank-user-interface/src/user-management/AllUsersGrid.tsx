@@ -5,6 +5,7 @@ import SingleUserMilestoneGrid from "./user-profile/SingleUserMilestoneGrid";
 
 const AllUsersGrid = () => {
   const [allUsers, setAllUsers] = useState([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([] as any[]);
   const BANKING_USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
   useEffect(() => {
     axios.get(BANKING_USER_SERVICE_BASE_URL + "/admin/user-profile/all-profiles/user").then(
@@ -50,12 +51,21 @@ const AllUsersGrid = () => {
     },
   ];
 
+  const handleExpandRows = (expanded: boolean, record: any) => {
+    console.log(expandedRowKeys, record);
+    if (expanded) {
+      expandedRowKeys.push(record.id);
+    }
+    setExpandedRowKeys([...expandedRowKeys]);
+  };
+
   return (
     <Table
       columns={columns}
       dataSource={allUsers}
       pagination={{ pageSize: 20 }}
       expandable={{
+        onExpand: handleExpandRows,
         expandedRowRender: (userRecord: any) => <SingleUserMilestoneGrid userRecord={userRecord} />,
         rowExpandable: (record: any) => record !== "Not Expandable",
       }}

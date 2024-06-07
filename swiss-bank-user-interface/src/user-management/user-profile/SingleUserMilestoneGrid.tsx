@@ -3,6 +3,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckIcon from "@mui/icons-material/Check";
 import ClearIcon from "@mui/icons-material/Clear";
 import { formatHumanReadable } from "../../utils/DataFormatter";
+import UploadedDocuments from "./UploadedDocuments";
 
 const SingleUserMilestoneGrid = ({ userRecord }: { userRecord: any }) => {
   const MILESTONES_FIELD_LIST = ["email", "phone", "dateOfBirth", "address", "occupation", "photo", "identity"];
@@ -12,12 +13,36 @@ const SingleUserMilestoneGrid = ({ userRecord }: { userRecord: any }) => {
     return formatHumanReadable(record.fieldName);
   };
 
-  const renderViewColumn = (value: any, record: any, index: any) => (
-    <button style={noButtonStyle} onClick={() => viewSubmissionRecord(value, record, index)}>
-      {typeof value == "string" ? value : <VisibilityIcon />}
-      {value?.basicInfo?.name}
-    </button>
-  );
+  const checkStatus = (field: any) => {
+    switch (field) {
+      case "NOT_PROCESSED":
+        return <span style={{ color: "orange" }}>Not Processed</span>;
+      case "VERIFIED":
+        return <span style={{ color: "green" }}>Verified</span>;
+      case "REJECTED":
+        return <span style={{ color: "red" }}>Rejected</span>;
+    }
+    console.log("check status", field);
+    return field === "NOT_PROCESSED" ? "Completed" : "Incomplete";
+  };
+  const renderStatusColumn = (value: any, record: any, index: any) => {
+    switch (record.fieldName) {
+      case "email":
+        return checkStatus(record.emailVerified);
+      case "phone":
+        return checkStatus(record.phoneVerified);
+      case "dateOfBirth":
+        return checkStatus(record.dateofBirthVerified);
+      case "address":
+        return checkStatus(record.addressVerified);
+      case "occupation":
+        return checkStatus(record.occupationVerified);
+      case "photo":
+        return checkStatus(record.photoVerified);
+      case "identity":
+        return checkStatus(record.governmentIdVerified);
+    }
+  };
 
   const renderValueColumn = (value: any, record: any, index: any) => {
     console.log(record["fieldName"], record, index);
@@ -55,6 +80,16 @@ const SingleUserMilestoneGrid = ({ userRecord }: { userRecord: any }) => {
   return (
     <Table
       style={{ marginLeft: 100, whiteSpace: "pre" }}
+      footer={() => (
+        <UploadedDocuments
+          fieldImageMap={{
+            profilePic: userRecord.basicInfo.profilePic,
+            identityProof: userRecord.kyc.identityProof,
+            addressProof: userRecord.kyc.addressProof,
+            personalPhoto: userRecord.kyc.personalPhoto,
+          }}
+        />
+      )}
       columns={[
         { title: "Submissions", dataIndex: "submissions", key: "submissions", render: renderFieldColumn },
         {
@@ -64,10 +99,10 @@ const SingleUserMilestoneGrid = ({ userRecord }: { userRecord: any }) => {
           render: renderValueColumn,
         },
         {
-          title: "View",
-          dataIndex: "view",
-          key: "view",
-          render: renderViewColumn,
+          title: "Status",
+          dataIndex: "status",
+          key: "status",
+          render: renderStatusColumn,
         },
         {
           title: "Action",

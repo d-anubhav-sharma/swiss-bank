@@ -6,8 +6,7 @@ import { setActiveContentPage, setUserMessageBoxState } from "../store/slice";
 const LoginForm = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const BANKING_USER_SERVICE_BASE_URL =
-    process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
+  const BANKING_USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
 
   const dispatch = useDispatch();
 
@@ -62,10 +61,7 @@ const LoginForm = () => {
         <button type="submit">Login</button>
       </form>
       <p>
-        Don't have an account?{" "}
-        <button onClick={() => dispatch(setActiveContentPage("register"))}>
-          Register
-        </button>
+        Don't have an account? <button onClick={() => dispatch(setActiveContentPage("register"))}>Register</button>
       </p>
     </div>
   );

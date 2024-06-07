@@ -6,6 +6,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import com.swiss.bank.user.service.definitions.VerificationStatus;
+
 import jakarta.annotation.Nonnull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -38,11 +40,19 @@ public class UserProfile {
 	private Preferences preferences;
 	@DocumentReference
 	private Consent consent;
-	private boolean emailVerified;
-	private boolean governmentIdVerified;
-	private boolean dateofBirthVerified;
-	private boolean addressVerified;
-	private boolean phoneVerified;
-	private boolean nationalityVerified;
+	@Builder.Default
+	private VerificationStatus emailVerified = VerificationStatus.NOT_PROCESSED;
+	@Builder.Default
+	private VerificationStatus governmentIdVerified = VerificationStatus.NOT_PROCESSED;
+	@Builder.Default
+	private VerificationStatus dateofBirthVerified = VerificationStatus.NOT_PROCESSED;
+	@Builder.Default
+	private VerificationStatus addressVerified = VerificationStatus.NOT_PROCESSED;
+	@Builder.Default
+	private VerificationStatus occupationVerified = VerificationStatus.NOT_PROCESSED;
+	@Builder.Default
+	private VerificationStatus phoneVerified = VerificationStatus.NOT_PROCESSED;
+	@Builder.Default
+	private VerificationStatus photoVerified = VerificationStatus.NOT_PROCESSED;
 	
 }
