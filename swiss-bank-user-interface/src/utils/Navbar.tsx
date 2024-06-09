@@ -26,6 +26,10 @@ const ProfileNavbarItems = [
   },
 ];
 
+const PersonalBankingNavbarItems = [
+  { title: "createAccount", label: "Create", icon: <AccountCircleIcon className="icon" />, category: "user" },
+];
+
 const MainNavbarItems = [
   {
     title: "userprofile",
@@ -112,6 +116,7 @@ const NavbarItemsMap: any = {
   approve: AdminNavbarItems,
   access: AdminNavbarItems,
   userprofile: ProfileNavbarItems,
+  personalBanking: PersonalBankingNavbarItems,
 };
 
 export default NavbarItemsMap;

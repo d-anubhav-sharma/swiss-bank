@@ -1,4 +1,4 @@
-package com.swiss.bank.user.service.util;
+package com.swiss.bank.common.utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,8 +8,7 @@ import java.util.List;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import com.swiss.bank.user.service.entities.Role;
-
+import com.swiss.bank.common.models.Role;
 
 public class DataUtil{
 

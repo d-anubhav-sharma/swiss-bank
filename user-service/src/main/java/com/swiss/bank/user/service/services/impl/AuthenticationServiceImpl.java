@@ -9,7 +9,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.exceptions.InvalidUsernamePasswordException;
+import com.swiss.bank.user.service.models.GetUserFromTokenRequest;
 import com.swiss.bank.user.service.models.LoginRequest;
 import com.swiss.bank.user.service.models.LoginResponse;
 import com.swiss.bank.user.service.models.LogoutResponse;
@@ -21,6 +23,7 @@ import com.swiss.bank.user.service.util.DataUtil;
 import com.swiss.bank.user.service.util.JwtTokenUtil;
 import com.swiss.bank.user.service.util.SwissConstants;
 
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
@@ -64,6 +67,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				exchange.getResponse().addCookie(ResponseCookie
 						.from("auth_token",jwtTokenUtil.generateAuthToken(auth.getPrincipal().toString()))
 						.httpOnly(true)
+						.domain("localhost")
 						.secure(true)
 						.path("/")
 						.maxAge(Duration.ofHours(1))
@@ -71,6 +75,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				exchange.getResponse().addCookie(ResponseCookie
 						.from(SwissConstants.USERNAME,auth.getPrincipal().toString())
 						.httpOnly(true)
+						.domain("localhost")
 						.secure(true)
 						.path("/")
 						.maxAge(Duration.ofHours(1))
@@ -105,6 +110,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				.maxAge(Duration.ofSeconds(0))
 				.build());
 		return Mono.just(LogoutResponse.builder().message("success").build());
+	}
+
+	@Override
+	public Mono<User> getUserFromToken(GetUserFromTokenRequest getUserFromTokenRequest) {
+		String authToken = getUserFromTokenRequest.getAuthToken();
+		Claims claims = jwtTokenUtil.getClaimsFromAuthToken(authToken);
+		String username = claims.get(SwissConstants.USERNAME).toString();
+		if(jwtTokenUtil.validateToken(authToken) && username!=null && username.equals(getUserFromTokenRequest.getUsername())) {
+			return userService.findUserByUsername(username);
+		}
+		return Mono.empty();
+		
 	}
 
 }

@@ -1,11 +1,13 @@
 package com.swiss.bank.user.service.services.impl;
 
+
 import java.security.Principal;
 import java.util.Date;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.swiss.bank.common.utils.DataUtil;
 import com.swiss.bank.user.service.entities.Address;
 import com.swiss.bank.user.service.entities.BasicInfo;
 import com.swiss.bank.user.service.entities.Consent;
@@ -23,7 +25,6 @@ import com.swiss.bank.user.service.repositories.PreferenceRepository;
 import com.swiss.bank.user.service.repositories.UserProfileRepository;
 import com.swiss.bank.user.service.services.UserProfileService;
 import com.swiss.bank.user.service.services.UserService;
-import com.swiss.bank.user.service.util.DataUtil;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

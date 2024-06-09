@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.exceptions.DuplicateUsernameException;
+import com.swiss.bank.user.service.models.GetUserFromTokenRequest;
 import com.swiss.bank.user.service.models.LoginRequest;
 import com.swiss.bank.user.service.models.LoginResponse;
 import com.swiss.bank.user.service.models.LogoutResponse;
@@ -63,6 +65,11 @@ public class AuthenticationController {
 	@GetMapping("/logout")
 	public ResponseEntity<Mono<LogoutResponse>> logout(ServerWebExchange exchange){
 		return ResponseEntity.ok(authenticationService.logout(exchange));
+	}
+	
+	@PostMapping("/fetchUserUsingAuthToken")
+	public ResponseEntity<Mono<User>> fetchUserUsingAuthToken(@RequestBody GetUserFromTokenRequest getUserFromTokenRequest){
+		return ResponseEntity.ok(authenticationService.getUserFromToken(getUserFromTokenRequest));
 	}
 
 }

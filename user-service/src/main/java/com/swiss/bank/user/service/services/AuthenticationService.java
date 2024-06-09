@@ -2,6 +2,8 @@ package com.swiss.bank.user.service.services;
 
 import org.springframework.web.server.ServerWebExchange;
 
+import com.swiss.bank.user.service.entities.User;
+import com.swiss.bank.user.service.models.GetUserFromTokenRequest;
 import com.swiss.bank.user.service.models.LoginRequest;
 import com.swiss.bank.user.service.models.LoginResponse;
 import com.swiss.bank.user.service.models.LogoutResponse;
@@ -17,5 +19,7 @@ public interface AuthenticationService {
 	public Mono<RegisterUserResponse> register(RegisterUserRequest userRegistrationRequest);
 
 	public Mono<LogoutResponse> logout(ServerWebExchange exchange);
+
+	public Mono<User> getUserFromToken(GetUserFromTokenRequest getUserFromTokenRequest);
 
 }

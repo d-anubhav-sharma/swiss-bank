@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.swiss.bank.common.utils.DataUtil;
 import com.swiss.bank.user.service.entities.Role;
 import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.exceptions.InvalidUsernamePasswordException;
@@ -16,7 +17,6 @@ import com.swiss.bank.user.service.models.UserUpdateRequest;
 import com.swiss.bank.user.service.repositories.RoleRepository;
 import com.swiss.bank.user.service.repositories.UserRepository;
 import com.swiss.bank.user.service.services.UserService;
-import com.swiss.bank.user.service.util.DataUtil;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

@@ -20,7 +20,7 @@ public class JwtTokenUtil {
 	private static final String ISSUER_NAME = "admin@swiss-bank.com";
 	private static final long EXPIRATION_TIME_MILLIS = 3600 * 1000L;
 
-	private Claims getClaimsFromAuthToken(String authToken) {
+	public Claims getClaimsFromAuthToken(String authToken) {
 		return Jwts
 				.parser()
 				.setSigningKey(secretHashingKey)
