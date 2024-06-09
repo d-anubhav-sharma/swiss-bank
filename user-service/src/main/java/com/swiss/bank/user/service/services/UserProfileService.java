@@ -19,6 +19,8 @@ public interface UserProfileService {
 	public Mono<UserProfile> getUserProfileByUsername(String username);
 
 	public Flux<UserProfile> findAllProfilesAllowedToUser(ServerWebExchange serverWebExchange, Principal principal);
+
+	public Mono<UserProfile> saveUserProfile(UserProfile userProfile);
 	
 	
 }

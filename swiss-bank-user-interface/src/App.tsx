@@ -14,6 +14,7 @@ import AllUsersGrid from "./user-management/AllUsersGrid";
 import { setActiveContentPage } from "./store/slice";
 import UserProfile from "./user-management/user-profile/UserProfile";
 import ProgressItemsBar from "./user-message-box/ProgressItemsBar";
+import PersonalBankingHome from "./personal-banking/home/PersonalBankingHome";
 const App = () => {
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
@@ -49,6 +50,8 @@ const App = () => {
         return isAdmin ? <AllUsersGrid /> : updateAndRender("home");
       case "userprofile":
         return loggedIn ? <UserProfile /> : updateAndRender("login");
+      case "personalBanking":
+        return loggedIn ? <PersonalBankingHome /> : updateAndRender("login");
     }
   };
   return (

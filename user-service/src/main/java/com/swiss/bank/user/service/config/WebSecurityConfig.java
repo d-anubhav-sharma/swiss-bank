@@ -58,7 +58,6 @@ public class WebSecurityConfig {
 	SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity serverHttpSecurity) {
 		return serverHttpSecurity
 				.csrf(CsrfSpec::disable)
-
 				.httpBasic(http -> http.authenticationEntryPoint(new NoPopupAuthenticationEntryPoint()))
 				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 				.authorizeExchange(exchange -> exchange
@@ -76,8 +75,8 @@ public class WebSecurityConfig {
 								"/v3/api-docs")
 						.permitAll()
 						.pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-						.pathMatchers("/admin/**", "/user/**")
-						.hasAuthority("STAFF")
+						.pathMatchers("/admin/**", "/user/**").hasAuthority("STAFF")
+						.pathMatchers("/approval/**").hasAuthority("ADMIN")
 						.anyExchange().authenticated())
 				.addFilterBefore(jwtRequestFilter, SecurityWebFiltersOrder.AUTHENTICATION)
 				.formLogin(FormLoginSpec::disable)

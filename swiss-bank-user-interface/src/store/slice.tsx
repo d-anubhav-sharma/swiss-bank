@@ -16,6 +16,8 @@ const slice = createSlice({
     loggedIn: null,
     loggedInUser: "",
     allProgressMessages: [],
+    confirmationDialogBoxState: {},
+    userProfileUpdatedCount: 0,
   },
   reducers: {
     setNavbarExpanded: (state, action) => {
@@ -45,6 +47,12 @@ const slice = createSlice({
     setAllProgressMessages: (state, action) => {
       state.allProgressMessages = action.payload;
     },
+    setConfirmationDialogBoxState: (state, action) => {
+      state.confirmationDialogBoxState = action.payload;
+    },
+    setUserProfileUpdatedCount: (state, action) => {
+      state.userProfileUpdatedCount = action.payload;
+    },
   },
 });
 
@@ -58,5 +66,7 @@ export const {
   setLoggedIn,
   setLoggedInUser,
   setAllProgressMessages,
+  setConfirmationDialogBoxState,
+  setUserProfileUpdatedCount,
 } = slice.actions;
 export default slice.reducer;

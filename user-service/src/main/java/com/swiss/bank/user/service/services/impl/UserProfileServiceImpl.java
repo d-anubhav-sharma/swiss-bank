@@ -144,4 +144,9 @@ public class UserProfileServiceImpl implements UserProfileService{
 		return userService.findAllUsers().flatMap(user -> getUserProfileByUsername(user.getUsername()));
 	}
 
+	@Override
+	public Mono<UserProfile> saveUserProfile(UserProfile userProfile) {
+		return userProfileRepository.save(userProfile);
+	}
+
 }
