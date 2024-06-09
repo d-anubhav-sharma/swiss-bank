@@ -14,6 +14,19 @@ services:
     env_file:
       - .env
 
+  account-service:
+    build:
+      context: ./account-service
+      dockerfile: Dockerfile
+    ports:
+      - "10002:10002"
+    networks:
+      - internal
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+
   swiss-bank-user-interface:
     build:
       context: ./swiss-bank-user-interface
