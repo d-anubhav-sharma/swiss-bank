@@ -1,6 +1,16 @@
 version: "3.8"
 
 services:
+  swiss-bank-common:
+    build:
+      context: ./swiss-bank-common
+      dockerfile: Dockerfile
+    image: swiss-bank-common:latest
+    depends_on:
+      - mongodb
+    env_file:
+      - .env
+
   user-service:
     build:
       context: ./user-service
@@ -11,6 +21,7 @@ services:
       - internal
     depends_on:
       - mongodb
+      - swiss-bank-common
     env_file:
       - .env
 
@@ -24,6 +35,21 @@ services:
       - internal
     depends_on:
       - mongodb
+      - swiss-bank-common
+    env_file:
+      - .env
+
+  payment-service:
+    build:
+      context: ./payment-service
+      dockerfile: Dockerfile
+    ports:
+      - "10009:10009"
+    networks:
+      - internal
+    depends_on:
+      - mongodb
+      - swiss-bank-common
     env_file:
       - .env
 
