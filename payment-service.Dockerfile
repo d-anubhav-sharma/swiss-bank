@@ -9,11 +9,12 @@ COPY swiss-bank-common/target/swiss-bank-common-0.0.1-SNAPSHOT.jar .
 RUN mkdir -p ~/.m2/repository/com/shaan/swiss-bank-common/0.0.1-SNAPSHOT/
 RUN cp swiss-bank-common-0.0.1-SNAPSHOT.jar ~/.m2/repository/com/shaan/swiss-bank-common/0.0.1-SNAPSHOT/ 
 RUN ls -lrt ~/.m2/repository/com/shaan/swiss-bank-common/0.0.1-SNAPSHOT/
-RUN mvn clean package -DskipTests
+RUN mvn package -DskipTests
 
 FROM openjdk:17-jdk
 ARG APP_NAME=payment-service
 WORKDIR /app/$APP_NAME
 COPY --from=builder /app/$APP_NAME/target/$APP_NAME-*.jar $APP_NAME.jar
 EXPOSE 10001
+ENV JDK_JAVA_OPTIONS "--add-opens java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED"
 ENTRYPOINT java -jar payment-service.jar

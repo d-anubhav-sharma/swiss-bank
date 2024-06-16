@@ -4,12 +4,13 @@ import CheckoutForm from "./CheckoutForm";
 import axios from "axios";
 
 function PaymentForm() {
+  const BANKING_PAYMENT_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_PAYMENT_SERVICE_BASE_URL;
   const [clientSecret, setClientSecret] = useState("");
 
   const createPaymentIntent = async () => {
     axios
       .post(
-        "http://localhost:10009/payment-service/payment/doPayment",
+        BANKING_PAYMENT_SERVICE_BASE_URL + "/payment/doPayment",
         { amount: 1000, currency: "usd" },
         {
           headers: {
