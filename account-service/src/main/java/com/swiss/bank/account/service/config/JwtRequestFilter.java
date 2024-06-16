@@ -2,6 +2,7 @@ package com.swiss.bank.account.service.config;
 
 import java.net.URI;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,9 +28,11 @@ import reactor.core.publisher.Mono;
 public class JwtRequestFilter implements WebFilter {
 
 	private WebClient webClient;
+	private String userServiceBaseUrl;
 	
-	public JwtRequestFilter(WebClient webClient) {
+	public JwtRequestFilter(WebClient webClient, @Value("${user-service.base-url}") String userServiceBaseUrl) {
 		this.webClient = webClient;
+		this.userServiceBaseUrl = userServiceBaseUrl;
 	}
 
 	@Override
@@ -40,7 +43,7 @@ public class JwtRequestFilter implements WebFilter {
 			log.atInfo().log("cookie not found for authentication or username");
 			return chain.filter(exchange);
 		}
-		return webClient.post().uri(URI.create("http://localhost:10001/user-service/auth/fetchUserUsingAuthToken"))
+		return webClient.post().uri(URI.create(userServiceBaseUrl+"/auth/fetchUserUsingAuthToken"))
 			.cookie("auth_token", authCookie.getValue())
 			.cookie("username", usernameCookie.getValue())
 			.contentType(MediaType.APPLICATION_JSON)

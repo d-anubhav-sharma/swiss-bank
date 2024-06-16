@@ -1,8 +1,10 @@
 package com.swiss.bank.account.service.config;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,28 +25,22 @@ import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 @EnableReactiveMethodSecurity
 public class WebSecurityConfig {
 
-	private static final List<String> ALLOWED_ORIGINS = Collections.unmodifiableList(
-			List.of("http://localhost:10000", "http://localhost:10001", "http://localhost:10002",
-					"http://localhost:10003", "http://localhost:10004",
-					"http://localhost:10005", "http://localhost:10006", "http://localhost:10007",
-					"https://www.google.com", "http://localhost:3000",
-					"https://localhost:8443", "https://localhost:3000",
-					"https://localhost:443", "https://localhost"));
-
 	private static final List<String> ALLOWED_METHODS = Collections
 			.unmodifiableList(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
 	
 	private JwtRequestFilter jwtRequestFilter;
+	private List<String> allowedOrigins;
 
-	public WebSecurityConfig(JwtRequestFilter jwtRequestFilter) {
+	public WebSecurityConfig(JwtRequestFilter jwtRequestFilter, @Value("${allowed-origins}") String allowedHosts) {
 		this.jwtRequestFilter = jwtRequestFilter;
+		this.allowedOrigins = Collections.unmodifiableList(Arrays.asList(allowedHosts.split(",")));
 	}
 
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowedOrigins(ALLOWED_ORIGINS);
+		configuration.setAllowedOrigins(allowedOrigins);
 		configuration.setAllowedMethods(ALLOWED_METHODS);
 		configuration.setAllowCredentials(true);
 		configuration.addAllowedHeader("*");

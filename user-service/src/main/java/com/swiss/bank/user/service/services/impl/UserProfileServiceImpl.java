@@ -124,8 +124,7 @@ public class UserProfileServiceImpl implements UserProfileService{
 	                        userProfile.setConsent(tuple.getT6());
 	                        return userProfile;
 	                    }))
-				.defaultIfEmpty(blankUserProfile())
-				.log();
+				.defaultIfEmpty(blankUserProfile());
 	}
 
 	private UserProfile blankUserProfile() {
