@@ -1,4 +1,4 @@
-package com.swiss.bank.account.service.config;
+package com.swiss.bank.payment.service.config;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.AuthenticationException;
