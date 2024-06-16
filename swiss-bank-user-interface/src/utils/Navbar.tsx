@@ -27,7 +27,19 @@ const ProfileNavbarItems = [
 ];
 
 const PersonalBankingNavbarItems = [
-  { title: "createAccount", label: "Create", icon: <AccountCircleIcon className="icon" />, category: "user" },
+  {
+    title: "personalBankingCreateAccount",
+    label: "Create",
+    icon: <AccountCircleIcon className="icon" />,
+    category: "user",
+  },
+  {
+    title: "back",
+    label: "Back",
+    icon: <ArrowBackIcon className="icon" />,
+    target: "/back",
+    category: "admin",
+  },
 ];
 
 const MainNavbarItems = [
@@ -117,6 +129,7 @@ const NavbarItemsMap: any = {
   access: AdminNavbarItems,
   userprofile: ProfileNavbarItems,
   personalBanking: PersonalBankingNavbarItems,
+  personalBankingCreateAccount: PersonalBankingNavbarItems,
 };
 
 export default NavbarItemsMap;

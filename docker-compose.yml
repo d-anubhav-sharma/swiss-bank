@@ -3,9 +3,8 @@ version: "3.8"
 services:
   swiss-bank-common:
     build:
-      context: ./swiss-bank-common
-      dockerfile: Dockerfile
-    image: swiss-bank-common:latest
+      context: .
+      dockerfile: swiss-bank-common.Dockerfile
     depends_on:
       - mongodb
     env_file:
@@ -13,8 +12,8 @@ services:
 
   user-service:
     build:
-      context: ./user-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: user-service.Dockerfile
     ports:
       - "10001:10001"
     networks:
@@ -27,8 +26,8 @@ services:
 
   account-service:
     build:
-      context: ./account-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: account-service.Dockerfile
     ports:
       - "10002:10002"
     networks:
@@ -41,8 +40,8 @@ services:
 
   payment-service:
     build:
-      context: ./payment-service
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: payment-service.Dockerfile
     ports:
       - "10009:10009"
     networks:

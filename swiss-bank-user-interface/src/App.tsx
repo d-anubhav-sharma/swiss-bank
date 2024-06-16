@@ -15,6 +15,16 @@ import { setActiveContentPage } from "./store/slice";
 import UserProfile from "./user-management/user-profile/UserProfile";
 import ProgressItemsBar from "./user-message-box/ProgressItemsBar";
 import PersonalBankingHome from "./personal-banking/home/PersonalBankingHome";
+import PersonalBankingCreateAccount from "./personal-banking/account/PersonalBankingCreateAccount";
+import PaymentForm from "./personal-banking/payment/PaymentForm";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+const stripePromise = loadStripe(
+  "pk_test_51PQ6l51kzQN5Vsox1un36EiFSRpYRchM18DD3tZCcVkTbd5IBI94J0JRWFgiWc9nlmaD3QBGH8iTiKxj4FxRv8wS00NcJaBk8R"
+);
+
 const App = () => {
   axios.defaults.withCredentials = true;
   const dispatch = useDispatch();
@@ -30,6 +40,16 @@ const App = () => {
         return <Home />;
     }
   };
+
+  const getPaymentFormComponent = () => {
+    return (
+      <Elements stripe={stripePromise}>
+        <h1>Payment Form</h1>
+        <PaymentForm />
+      </Elements>
+    );
+  };
+
   const getContentForApp = () => {
     switch (activeContentPage) {
       case "login":
@@ -52,6 +72,12 @@ const App = () => {
         return loggedIn ? <UserProfile /> : updateAndRender("login");
       case "personalBanking":
         return loggedIn ? <PersonalBankingHome /> : updateAndRender("login");
+      case "personalBankingCreateAccount":
+        return loggedIn ? <PersonalBankingCreateAccount /> : updateAndRender("login");
+      case "payment":
+        return <PaymentForm />;
+      default:
+        return <Home />;
     }
   };
   return (
@@ -61,7 +87,7 @@ const App = () => {
       <Navbar />
       <div className="content">
         <h1>Swiss Bank</h1>
-        {getContentForApp()}
+        <Elements stripe={stripePromise}>{getContentForApp()}</Elements>
       </div>
     </div>
   );

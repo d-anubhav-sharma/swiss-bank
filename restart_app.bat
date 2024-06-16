@@ -1,3 +1,4 @@
+echo off
 if "%1"=="" (
     echo "Service name argument required";
     exit 1;
