@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import "./CheckoutForm.css";
+import { useDispatch, useSelector } from "react-redux";
+import { setAllProgressMessages } from "../../store/slice";
 
 const CheckoutForm = ({
   clientSecret,
@@ -15,10 +17,21 @@ const CheckoutForm = ({
   const stripe = useStripe();
   const elements = useElements();
   const [error, setError] = useState(null);
+  const { allProgressMessages } = useSelector((state) => state.reducer);
+  const dispatch = useDispatch();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    let id = Math.random() * 1000000;
+    dispatch(
+      setAllProgressMessages([
+        ...allProgressMessages,
+        {
+          messageId: id,
+          message: "Processing your payment",
+        },
+      ])
+    );
     stripe
       .createPaymentMethod({
         type: "card",
@@ -30,12 +43,25 @@ const CheckoutForm = ({
       .then(
         (responseData) => {
           stripe.confirmCardPayment(clientSecret, { payment_method: responseData.paymentMethod.id }).then(
-            (confirmPaymentData) => onPaymentSuccess(confirmPaymentData),
-            (error) => onPaymentFailure(error)
+            (confirmPaymentData) => {
+              onPaymentSuccess(confirmPaymentData);
+              hideProgressMessageWithId(id);
+            },
+            (error) => {
+              onPaymentFailure(error);
+              hideProgressMessageWithId(id);
+            }
           );
         },
-        (error) => onPaymentFailure(error)
+        (error) => {
+          onPaymentFailure(error);
+          hideProgressMessageWithId(id);
+        }
       );
+  };
+
+  const hideProgressMessageWithId = (id) => {
+    dispatch(setAllProgressMessages(allProgressMessages.filter((message) => message.messageId !== id)));
   };
 
   return (

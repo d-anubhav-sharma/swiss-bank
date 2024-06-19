@@ -1,5 +1,7 @@
 package com.swiss.bank.account.service.controllers;
 
+import java.security.Principal;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +25,7 @@ public class PersonalBankingAccountController {
 	}
 	
 	@GetMapping("/all")
-	public ResponseEntity<Flux<Account>> findAccountsForUser(){
-		return ResponseEntity.ok(accountService.findAccountsForUser());
+	public ResponseEntity<Flux<Account>> findAccountsForUser(Principal principal){
+		return ResponseEntity.ok(accountService.findAccountsForUser(principal.getName()));
 	}
 }

@@ -1,20 +1,39 @@
 import { Button, FormControl, MenuItem, Select, TextField } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { setActiveContentPage, setUserMessageBoxState } from "../../store/slice";
-import { useState } from "react";
+import { setActiveContentPage, setAllProgressMessages, setUserMessageBoxState } from "../../store/slice";
+import { useEffect, useState } from "react";
 import CheckoutForm from "../payment/CheckoutForm";
 import { createPaymentIntent } from "../../utils/PaymentUtils";
 import "./PersonalBankingCreateAccount.css";
+import axios from "axios";
 
 const PersonalBankingCreateAccount = () => {
+  const ACCOUNT_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_ACCOUNT_SERVICE_BASE_URL;
+
   const dispatch = useDispatch();
   const [initialAmount, setInitialAmount] = useState(5000);
   const [paymentCheckoutFormVisible, setPaymentCheckoutFormVisible] = useState(false);
+  const [userHasExistingAccount, setUserHasExistingAccount] = useState("");
   const [clientSecret, setClientSecret] = useState("");
-  const { loggedInUser } = useSelector((state: any) => state.reducer);
+  const { loggedInUser, allProgressMessages } = useSelector((state: any) => state.reducer);
+
+  const checkUserHasExistingAccount = () => {
+    axios.get(ACCOUNT_SERVICE_BASE_URL + "/account/checkUserHasExistingAccount?includeInactiveAccounts=true").then(
+      () => {},
+      () => {}
+    );
+  };
 
   const handleGotoTab = (tabName: string) => {
     dispatch(setActiveContentPage(tabName));
+  };
+
+  const getCreateAccountForm = () => {
+    return (
+      <Button type="submit" variant="contained" fullWidth onClick={payAndCreateAccount}>
+        Pay & Create Account
+      </Button>
+    );
   };
 
   const handlePaymentFailure = (error: any) => {
@@ -44,17 +63,31 @@ const PersonalBankingCreateAccount = () => {
   };
 
   const payAndCreateAccount = () => {
+    let id = Math.random() * 1000000;
+    dispatch(
+      setAllProgressMessages([
+        ...allProgressMessages,
+        {
+          messageId: id,
+          message: "Processing your payment",
+        },
+      ])
+    );
     createPaymentIntent(
-      { amount: initialAmount, currency: "USD", username: loggedInUser },
+      { amount: initialAmount, currency: "USD", username: loggedInUser, category: "ACCOUNT_CREATE" },
       (responseData: any) => {
         setClientSecret(responseData.data.client_secret);
         setPaymentCheckoutFormVisible(true);
+        dispatch(setAllProgressMessages(allProgressMessages.filter((message: any) => message.messageId !== id)));
       },
       (error: any) => {
         dispatch(setUserMessageBoxState({ message: error.message, level: "error", visible: true }));
+        dispatch(setAllProgressMessages(allProgressMessages.filter((message: any) => message.messageId !== id)));
       }
     );
   };
+
+  useEffect(() => checkUserHasExistingAccount(), []);
 
   const noButtonStyle = {
     border: "none",
@@ -112,11 +145,7 @@ const PersonalBankingCreateAccount = () => {
             error={initialAmount < 5000}
           ></TextField>
         </div>
-        <div style={{ marginTop: 20 }}>
-          <Button type="submit" variant="contained" fullWidth onClick={payAndCreateAccount}>
-            Pay & Create Account
-          </Button>
-        </div>
+        <div style={{ marginTop: 20 }}>{getCreateAccountForm()}</div>
       </div>
       <div className="create-account-checkout-form">
         {paymentCheckoutFormVisible && (

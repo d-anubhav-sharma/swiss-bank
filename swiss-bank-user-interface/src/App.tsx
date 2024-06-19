@@ -19,7 +19,7 @@ import PersonalBankingCreateAccount from "./personal-banking/account/PersonalBan
 import PaymentForm from "./personal-banking/payment/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import PersonalBankingAllTransactions from "./personal-banking/payment/AllTransactions";
 
 const stripePromise = loadStripe(
   "pk_test_51PQ6l51kzQN5Vsox1un36EiFSRpYRchM18DD3tZCcVkTbd5IBI94J0JRWFgiWc9nlmaD3QBGH8iTiKxj4FxRv8wS00NcJaBk8R"
@@ -74,6 +74,8 @@ const App = () => {
         return loggedIn ? <PersonalBankingHome /> : updateAndRender("login");
       case "personalBankingCreateAccount":
         return loggedIn ? <PersonalBankingCreateAccount /> : updateAndRender("login");
+      case "personalBankingAllTransactions":
+        return loggedIn ? <PersonalBankingAllTransactions /> : updateAndRender("login");
       case "payment":
         return <PaymentForm />;
       default:

@@ -6,9 +6,17 @@ public enum VerificationStatus {
 	REJECTED("Rejected"), 
 	NOT_PROCESSED("Not Processed Yet");
 
-	String label;
+	private String label;
 
 	VerificationStatus(String label) {
 		this.label = label;
+	}
+	
+	public String getVerificationStatus() {
+		return label;
+	}
+	
+	public boolean getVerified() {
+		return "Verified".equals(label);
 	}
 }

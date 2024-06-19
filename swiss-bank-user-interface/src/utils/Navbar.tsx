@@ -8,6 +8,8 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import KeyIcon from "@mui/icons-material/Key";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import AddCardIcon from "@mui/icons-material/AddCard";
+import PaidIcon from "@mui/icons-material/Paid";
 
 const ProfileNavbarItems = [
   {
@@ -31,6 +33,18 @@ const PersonalBankingNavbarItems = [
     title: "personalBankingCreateAccount",
     label: "Create",
     icon: <AccountCircleIcon className="icon" />,
+    category: "user",
+  },
+  {
+    title: "personalBankingAddMoneyToAccount",
+    label: "Add Balance",
+    icon: <AddCardIcon className="icon" />,
+    category: "user",
+  },
+  {
+    title: "personalBankingAllTransactions",
+    label: "Transactions",
+    icon: <PaidIcon className="icon" />,
     category: "user",
   },
   {
@@ -130,6 +144,7 @@ const NavbarItemsMap: any = {
   userprofile: ProfileNavbarItems,
   personalBanking: PersonalBankingNavbarItems,
   personalBankingCreateAccount: PersonalBankingNavbarItems,
+  personalBankingAllTransactions: PersonalBankingNavbarItems,
 };
 
 export default NavbarItemsMap;

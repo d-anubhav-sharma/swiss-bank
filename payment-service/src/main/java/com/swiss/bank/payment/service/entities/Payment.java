@@ -30,5 +30,6 @@ public class Payment {
 	private Date paymentCompletedAt;
 	private Date paymentFailedAt;
 	private PaymentStatus status;
+	private String intendId;
 
 }

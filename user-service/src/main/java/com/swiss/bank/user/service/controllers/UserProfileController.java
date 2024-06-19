@@ -49,4 +49,9 @@ public class UserProfileController {
 	public ResponseEntity<Mono<UserProfile>> getUserProfileByUsername(@PathVariable String username){
 		return ResponseEntity.ok(userProfileService.getUserProfileByUsername(username));
 	}
+	
+	@GetMapping("/checkKYC/{username}")
+	public ResponseEntity<Mono<String>> checkKycFromUsername(@PathVariable String username){
+		return ResponseEntity.ok(userProfileService.checkKycStatusFromUsername(username));
+	}
 }

@@ -62,10 +62,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 						loginRequest.getPassword(), 
 						DataUtil.getGrantedAuthoritiesFromRoles(user.getRoles())))
 			)
-			.doOnNext(auth -> {
+			.map(auth -> {
 				log.atInfo().log("Generating and appending cookie: {}", auth.getPrincipal());
+				String username = auth.getPrincipal().toString();
+				String authToken = jwtTokenUtil.generateAuthToken(auth.getPrincipal().toString());
 				exchange.getResponse().addCookie(ResponseCookie
-						.from("auth_token",jwtTokenUtil.generateAuthToken(auth.getPrincipal().toString()))
+						.from("auth_token",authToken)
 						.httpOnly(true)
 						.domain("localhost")
 						.secure(true)
@@ -73,17 +75,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 						.maxAge(Duration.ofHours(1))
 						.build());
 				exchange.getResponse().addCookie(ResponseCookie
-						.from(SwissConstants.USERNAME,auth.getPrincipal().toString())
+						.from(SwissConstants.USERNAME,username)
 						.httpOnly(true)
 						.domain("localhost")
 						.secure(true)
 						.path("/")
 						.maxAge(Duration.ofHours(1))
-						.build());				
-			})
-			.map(auth -> LoginResponse
-							.builder()
-							.build());
+						.build());
+				return LoginResponse
+						.builder()
+						.username(username)
+						.token(authToken)
+						.build();
+			});
 
 	}
 

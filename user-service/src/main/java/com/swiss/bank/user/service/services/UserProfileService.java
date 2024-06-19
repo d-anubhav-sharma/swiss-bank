@@ -21,6 +21,8 @@ public interface UserProfileService {
 	public Flux<UserProfile> findAllProfilesAllowedToUser(ServerWebExchange serverWebExchange, Principal principal);
 
 	public Mono<UserProfile> saveUserProfile(UserProfile userProfile);
+
+	public Mono<String> checkKycStatusFromUsername(String username);
 	
 	
 }

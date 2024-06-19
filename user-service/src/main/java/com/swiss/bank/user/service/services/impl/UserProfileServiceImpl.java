@@ -149,4 +149,19 @@ public class UserProfileServiceImpl implements UserProfileService{
 		return userProfileRepository.save(userProfile);
 	}
 
+	@Override
+	public Mono<String> checkKycStatusFromUsername(String username) {
+		return userProfileRepository
+				.findByUsername(username)
+				.map(userProfile -> 
+					userProfile.getPhotoVerified().getVerified() && 
+					userProfile.getAddressVerified().getVerified() &&
+					userProfile.getDateofBirthVerified().getVerified() &&
+					userProfile.getGovernmentIdVerified().getVerified() &&
+					userProfile.getOccupationVerified().getVerified() &&
+					userProfile.getPhoneVerified().getVerified() &&
+					userProfile.getEmailVerified().getVerified()
+					? "GREEN": "ORANGE");
+	}
+
 }

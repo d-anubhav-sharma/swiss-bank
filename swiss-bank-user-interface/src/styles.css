@@ -123,6 +123,7 @@ p {
   color: white;
   min-width: 500px;
   padding: 10px 20px 10px 20px;
+  z-index: 200;
 }
 .loader {
   border: 2px solid #f3f3f3; /* Light grey */

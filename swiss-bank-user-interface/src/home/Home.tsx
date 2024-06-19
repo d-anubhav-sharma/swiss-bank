@@ -14,9 +14,7 @@ const Home = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
-      );
+      setCurrentImageIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
     }, 5000);
 
     return () => clearInterval(interval);
@@ -26,10 +24,7 @@ const Home = () => {
     <div className="home-screen">
       <div className="title">Welcome to Swiss Bank</div>
       <div className="bio">
-        <p>
-          We are committed to providing our clients with the highest level of
-          service and security.
-        </p>
+        <p>We are committed to providing our clients with the highest level of service and security.</p>
       </div>
       <div className="image-container">
         {images.map((image, index) => (
@@ -37,10 +32,8 @@ const Home = () => {
             key={index}
             src={image}
             loading="lazy"
-            alt="Swiss Bank"
-            className={`bank-image ${
-              index === currentImageIndex ? "active" : ""
-            }`}
+            alt="Swiss Bank Home Screen Image"
+            className={`bank-image ${index === currentImageIndex ? "active" : ""}`}
           />
         ))}
       </div>

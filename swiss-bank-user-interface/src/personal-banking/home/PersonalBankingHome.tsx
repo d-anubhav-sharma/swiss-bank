@@ -118,7 +118,13 @@ const PersonalBankingHome = () => {
         </div>
       );
     }
-    return personalUserAccounts.map((account: any) => <div key={account.accountNumber}>{"account"}</div>);
+    return personalUserAccounts.map((account: any) => (
+      <div key={account.accountNumber}>
+        <span>Account Number: {account.accountNumber}</span>
+        <span>Account User: {account.username}</span>
+        <span>Account Balance: {account.balance}</span>
+      </div>
+    ));
   };
   return (
     <div>
