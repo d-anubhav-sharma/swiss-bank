@@ -1,0 +1,34 @@
+[{
+  "_id": {
+    "$oid": "666080e310d3317ab0c0c8c6"
+  },
+  "username": "anubhav_sharma",
+  "password": "$2a$10$r9LwHulRCDMMU2fHpyY29OKqFuuLjWmGPLE.6HvdzTLthF0sjS652",
+  "email": "anubhav.sharma@swiss-bank.com",
+  "roles": [
+    {
+      "$oid": "6660810710d3317ab0c0c8c7"
+    }
+  ],
+  "_class": "com.swiss.bank.user.service.entities.User"
+},
+{
+  "_id": {
+    "$oid": "6662ca7574c6115858f6cabc"
+  },
+  "username": "sarthak_vats",
+  "password": "$2a$10$PcfYO3C3jtBub.eVDUUMJe3GLNBLW7IbZcLhFLXyDMSZ1j0qdvrom",
+  "email": "sarthak.vats@gmail.com",
+  "roles": [],
+  "_class": "com.swiss.bank.user.service.entities.User"
+},
+{
+  "_id": {
+    "$oid": "66658e0c161e29167cb15077"
+  },
+  "username": "atul_sharma",
+  "password": "$2a$10$9jz/.b/oXgCW6tVV/IvD5er4VTuguozBd8mMTRmHbdjrE/RB6hnxu",
+  "email": "1502atulsharma@gmail.com",
+  "roles": [],
+  "_class": "com.swiss.bank.user.service.entities.User"
+}]

@@ -1,0 +1,12 @@
+[{
+  "_id": {
+    "$oid": "6660810710d3317ab0c0c8c7"
+  },
+  "username": "anubhav_sharma",
+  "roleName": "OWNER",
+  "privileges": [
+    "STAFF",
+    "ADMIN"
+  ],
+  "_class": "com.swiss.bank.user.service.entities.Role"
+}]
