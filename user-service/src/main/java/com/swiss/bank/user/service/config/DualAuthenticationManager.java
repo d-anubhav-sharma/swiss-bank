@@ -7,9 +7,9 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.exceptions.InvalidUsernamePasswordException;
 import com.swiss.bank.user.service.services.UserService;
-import com.swiss.bank.user.service.util.DataUtil;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -32,21 +32,20 @@ public class DualAuthenticationManager implements ReactiveAuthenticationManager{
 		String username = authentication.getPrincipal().toString();
 		String password = authentication.getCredentials().toString();
 		log.atInfo().log("Username: {} Password: {}", username, password);
-		
+		Mono<User> userMono = userService
+				.findUserByUsername(username)
+				.switchIfEmpty(Mono.error(new InvalidUsernamePasswordException("No such user exists")))
+				.map(user -> {
+					if(!passwordEncoder.matches(password, user.getPassword())) {
+						throw new InvalidUsernamePasswordException("for user: "+user.getUsername());
+					}
+					return user;
+				});
+
 		return userService
-					.findUserByUsername(username)
-					.switchIfEmpty(Mono.error(new InvalidUsernamePasswordException("Invalida username/password exception")))
-					.map(user -> {
-						log.atInfo().log("user found with given username: {}", username);
-						if(!passwordEncoder.matches(password, user.getPassword())) {
-							throw new InvalidUsernamePasswordException("for user: "+user.getUsername());
-						}
-						log.atInfo().log("Password matched for user: {}", username);
-						return new UsernamePasswordAuthenticationToken(
-								user.getUsername(), 
-								user.getPassword(),
-								DataUtil.getGrantedAuthoritiesFromRoles(user.getRoles()));
-					});
+				.findAuthoritiesForUserName(username)
+				.zipWith(userMono, (authorities, user) -> 
+					new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), authorities));
 	}
 
 }

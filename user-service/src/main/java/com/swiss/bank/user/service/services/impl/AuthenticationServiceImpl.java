@@ -5,12 +5,13 @@ import java.time.Duration;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.swiss.bank.common.exceptions.InvalidUsernamePasswordException;
 import com.swiss.bank.user.service.entities.User;
-import com.swiss.bank.user.service.exceptions.InvalidUsernamePasswordException;
 import com.swiss.bank.user.service.models.GetUserFromTokenRequest;
 import com.swiss.bank.user.service.models.LoginRequest;
 import com.swiss.bank.user.service.models.LoginResponse;
@@ -19,7 +20,6 @@ import com.swiss.bank.user.service.models.RegisterUserRequest;
 import com.swiss.bank.user.service.models.RegisterUserResponse;
 import com.swiss.bank.user.service.services.AuthenticationService;
 import com.swiss.bank.user.service.services.UserService;
-import com.swiss.bank.user.service.util.DataUtil;
 import com.swiss.bank.user.service.util.JwtTokenUtil;
 import com.swiss.bank.user.service.util.SwissConstants;
 
@@ -52,16 +52,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Override
 	public Mono<LoginResponse> login(LoginRequest loginRequest, ServerWebExchange exchange) {
-		return userService
-			.findUserByUsername(loginRequest.getUsername())
-			.switchIfEmpty(Mono.error(new InvalidUsernamePasswordException("Invalida username/password exception")))
-			.flatMap(user -> 
-				authenticationManager
-					.authenticate(new UsernamePasswordAuthenticationToken(
-						loginRequest.getUsername(),
-						loginRequest.getPassword(), 
-						DataUtil.getGrantedAuthoritiesFromRoles(user.getRoles())))
-			)
+		return createAuthenticationForUsername(loginRequest.getUsername())
 			.map(auth -> {
 				log.atInfo().log("Generating and appending cookie: {}", auth.getPrincipal());
 				String username = auth.getPrincipal().toString();
@@ -126,6 +117,27 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}
 		return Mono.empty();
 		
+	}
+	
+	@Override
+	public Mono<Authentication> createAuthenticationForUsername(String username){
+		return userService
+			.findUserByUsername(username)
+			.zipWith(
+					userService.findAuthoritiesForUserName(username),
+					(user, authorities) -> new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), authorities)
+					);
+	}
+	
+
+	@Override
+	public Mono<Authentication> createAuthenticationForUsernamePassword(String username, String password){
+		return userService
+			.findUserByUsername(username)
+			.zipWith(
+					userService.findAuthoritiesForUserName(username),
+					(user, authorities) -> new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword(), authorities)
+					);
 	}
 
 }

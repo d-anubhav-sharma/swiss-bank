@@ -1,5 +1,6 @@
 package com.swiss.bank.user.service.services;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.web.server.ServerWebExchange;
 
 import com.swiss.bank.user.service.entities.User;
@@ -21,5 +22,9 @@ public interface AuthenticationService {
 	public Mono<LogoutResponse> logout(ServerWebExchange exchange);
 
 	public Mono<User> getUserFromToken(GetUserFromTokenRequest getUserFromTokenRequest);
+
+	public Mono<Authentication> createAuthenticationForUsername(String username);
+
+	public Mono<Authentication> createAuthenticationForUsernamePassword(String username, String password);
 
 }

@@ -3,6 +3,7 @@ package com.swiss.bank.user.service.entities;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import jakarta.annotation.Nonnull;
@@ -21,8 +22,8 @@ public class Role {
 	@Id
 	private String id;
 	@Nonnull
-	private String username;
+	@Indexed(unique = true)
 	private String roleName;
-	private List<String> privileges;
+	private List<String> privilegeIds;
 	
 }

@@ -51,9 +51,8 @@ public class TestController {
 	@PostMapping("/giveAdminAccessToOwner")
 	public Mono<User> giveAdminAccessToOwner(){
 		Role role = new Role();
-		role.setUsername("anubhav_sharma");
 		role.setRoleName("OWNER");
-		role.setPrivileges(List.of("STAFF", "ADMIN"));
+		role.setPrivilegeIds(List.of("STAFF", "ADMIN"));
 		
 		return userService.saveUserWithRoles(UserUpdateRequest
 				.builder()

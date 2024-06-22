@@ -1,4 +1,4 @@
-package com.swiss.bank.payment.service.config;
+package com.swiss.bank.common.config;
 
 import java.net.URI;
 
@@ -40,7 +40,7 @@ public class JwtRequestFilter implements WebFilter {
 		HttpCookie authCookie = exchange.getRequest().getCookies().getFirst("auth_token");
 		HttpCookie usernameCookie = exchange.getRequest().getCookies().getFirst("username");
 		if (authCookie == null || usernameCookie == null) {
-			log.atInfo().log("cookie not found for authentication or username");
+			log.atInfo().log("cookie not found for authentication or username {}", usernameCookie);
 			return chain.filter(exchange);
 		}
 		return webClient.post().uri(URI.create(userServiceBaseUrl+"/auth/fetchUserUsingAuthToken"))

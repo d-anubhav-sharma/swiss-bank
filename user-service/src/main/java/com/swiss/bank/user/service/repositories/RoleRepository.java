@@ -4,10 +4,10 @@ import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
 import com.swiss.bank.user.service.entities.Role;
 
-import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
-public interface RoleRepository extends ReactiveMongoRepository<Role, String> {
+public interface RoleRepository extends ReactiveMongoRepository<Role, String>{
 
-	Flux<Role> findRoleByUsername(String username);
+	Mono<Role> findRoleByRoleName(String roleName);
 
 }

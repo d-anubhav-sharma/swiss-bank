@@ -1,7 +1,11 @@
 package com.swiss.bank.user.service.services;
 
+import java.util.List;
+
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import com.swiss.bank.user.service.entities.Role;
 import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.models.LoginRequest;
 import com.swiss.bank.user.service.models.RegisterUserRequest;
@@ -26,4 +30,12 @@ public interface UserService {
 
 	public Mono<User> saveUserWithRoles(UserUpdateRequest user);
 	
+	public Flux<Role> findRoleByUsername(String username);
+
+	public Mono<Role> findRoleByRoleName(String roleName);
+
+	public Flux<SimpleGrantedAuthority> findAuthoritiesForUser(User user);
+
+	public Mono<List<SimpleGrantedAuthority>> findAuthoritiesForUserName(String username);
+
 }

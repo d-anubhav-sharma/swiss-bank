@@ -1,4 +1,4 @@
-package com.swiss.bank.account.service.config;
+package com.swiss.bank.common.config;
 
 import java.net.URI;
 

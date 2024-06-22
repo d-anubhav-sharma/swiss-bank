@@ -1,8 +1,12 @@
 package com.swiss.bank.user.service.config;
 
+import java.util.List;
+import java.util.function.Function;
+
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -11,9 +15,8 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 
-import com.swiss.bank.user.service.exceptions.InvalidUsernamePasswordException;
+import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.services.UserService;
-import com.swiss.bank.user.service.util.DataUtil;
 import com.swiss.bank.user.service.util.JwtTokenUtil;
 import com.swiss.bank.user.service.util.SwissConstants;
 
@@ -51,19 +54,20 @@ public class JwtRequestFilter implements WebFilter {
 		}
 		log.atInfo().log("Authentication successful. User should get the access: {}", username);
 		addUsernameToResponseHeader(exchange, username);
-		return userService
-				.findUserByUsername(username)
-				.switchIfEmpty(Mono.error(new InvalidUsernamePasswordException("Invalid username/password exception")))
-				.flatMap(user -> {
+		Mono<User> userMono = userService.findUserByUsername(username);
+		Mono<List<SimpleGrantedAuthority>> authoritiesMono = userService.findAuthoritiesForUserName(username);
+		return userMono
+				.zipWith(authoritiesMono, (user, authorities) -> {
 			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 					user.getUsername(), 
 					user.getPassword(),
-					DataUtil.getGrantedAuthoritiesFromRoles(user.getRoles()));
+					authorities);
 			SecurityContext securityContext = new SecurityContextImpl(authentication);
 			return chain
 					.filter(exchange)
 					.contextWrite(ReactiveSecurityContextHolder.withSecurityContext(Mono.just(securityContext)));
-		});
+		})
+		.flatMap(Function.identity());
 	}
 
 	private void addUsernameToResponseHeader(ServerWebExchange exchange, String username) {

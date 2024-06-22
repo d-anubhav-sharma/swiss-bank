@@ -1,4 +1,4 @@
-package com.swiss.bank.payment.service.config;
+package com.swiss.bank.common.config;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;

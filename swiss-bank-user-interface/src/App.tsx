@@ -20,6 +20,7 @@ import PaymentForm from "./personal-banking/payment/PaymentForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import PersonalBankingAllTransactions from "./personal-banking/payment/AllTransactions";
+import AccessManager from "./admin/AccessManager";
 
 const stripePromise = loadStripe(
   "pk_test_51PQ6l51kzQN5Vsox1un36EiFSRpYRchM18DD3tZCcVkTbd5IBI94J0JRWFgiWc9nlmaD3QBGH8iTiKxj4FxRv8wS00NcJaBk8R"
@@ -77,7 +78,9 @@ const App = () => {
       case "personalBankingAllTransactions":
         return loggedIn ? <PersonalBankingAllTransactions /> : updateAndRender("login");
       case "payment":
-        return <PaymentForm />;
+        return loggedIn ? <PaymentForm /> : updateAndRender("login");
+      case "access":
+        return isAdmin ? <AccessManager /> : updateAndRender("home");
       default:
         return <Home />;
     }
