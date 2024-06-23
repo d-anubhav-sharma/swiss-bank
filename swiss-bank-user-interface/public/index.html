@@ -2,9 +2,9 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
+    <link rel="icon" href="rupee_icon_white.png" />
     <meta
       http-equiv="Content-Security-Policy"
       content="
@@ -17,12 +17,10 @@
         "
     />
     <meta name="description" content="Web site created using create-react-app" />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -32,10 +30,16 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>Swiss Bank</title>
+    <title>&#36;wiss Bank</title>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="bouncingCoinVideo">
+      <video autoplay loop muted playsinline>
+        <source src="Usd.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
     <div id="root"></div>
     <!--
       This HTML file is a template.
@@ -48,4 +52,29 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   </body>
+  <style>
+    #bouncingCoinVideo {
+      position: fixed;
+      overflow: hidden;
+      opacity: 0.2;
+      height: 100vh;
+      width: 100vw;
+      animation: horizontalMove 20s infinite linear;
+      z-index: -10;
+    }
+    #bouncingCoinVideo video {
+      width: 50%;
+      height: 50%;
+    }
+    @keyframes horizontalMove {
+      0% {
+        margin-left: -10vw;
+        margin-top: -10vh;
+      }
+      100% {
+        margin-left: 100vw;
+        margin-top: 100vh;
+      }
+    }
+  </style>
 </html>

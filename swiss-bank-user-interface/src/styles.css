@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  background-color: white;
   margin: 0;
 }
 
@@ -141,5 +141,20 @@ p {
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.loading_icon_rupee {
+  width: 20px;
+  height: 20px;
+  animation: verticalRotate 3s 1s infinite ease-in;
+}
+
+@keyframes verticalRotate {
+  0% {
+    transform: rotateY(0deg);
+  }
+  100% {
+    transform: rotateY(360deg);
   }
 }

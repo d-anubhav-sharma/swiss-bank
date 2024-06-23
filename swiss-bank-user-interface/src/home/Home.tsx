@@ -22,7 +22,7 @@ const Home = () => {
 
   return (
     <div className="home-screen">
-      <div className="title">Welcome to Swiss Bank</div>
+      <div className="title">Welcome to &#36;wiss Bank</div>
       <div className="bio">
         <p>We are committed to providing our clients with the highest level of service and security.</p>
       </div>

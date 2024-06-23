@@ -6,8 +6,8 @@ const ProgressItemsBar = () => {
     return (
       <div id="progressItemsBar">
         {allProgressMessages.map((messageEntry: any) => (
-          <div style={{ display: "flex" }}>
-            <div className="loader"></div>
+          <div key={messageEntry.key} style={{ display: "flex" }}>
+            <img src="rupee_icon_golden.png" alt="loading" className="loading_icon_rupee" />
             <div key={messageEntry.messageId}>{messageEntry.message}</div>
           </div>
         ))}

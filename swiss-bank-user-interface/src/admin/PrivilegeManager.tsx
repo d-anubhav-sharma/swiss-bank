@@ -1,6 +1,8 @@
-import { Button, List, ListItem, ListItemButton, ListItemText, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import ListView from "../utils/list-window/ListView";
+import { Button, TextField } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const PrivilegeManager = () => {
   const USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
@@ -14,7 +16,9 @@ const PrivilegeManager = () => {
   const fetchAllPrivileges = () => {
     axios
       .get(USER_SERVICE_BASE_URL + "/admin/access/privileges/all")
-      .then((privilegeResponse) => setAllPrivileges(privilegeResponse.data));
+      .then((privilegeResponse) =>
+        setAllPrivileges(privilegeResponse.data.map((priv: any) => ({ key: priv.id, title: priv.privilegeName })))
+      );
   };
 
   const createNewPrivilege = () => {
@@ -32,49 +36,43 @@ const PrivilegeManager = () => {
   useEffect(() => {
     fetchAllPrivileges();
   }, []);
+  console.log(allPrivileges);
   return (
-    <div>
-      <h3>Privileges Manager</h3>
-      <div style={{ display: "flex" }}>
-        <div style={{ width: 400 }}>
-          <h5>Privileges</h5>{" "}
-          <List style={{ backgroundColor: navBlue }} disablePadding>
-            {allPrivileges.map((privilege: any) => (
-              <ListItem
-                disablePadding
-                key={privilege}
-                style={{
-                  backgroundColor: activePrivilege === privilege ? navBlue : "white",
-                  color: activePrivilege === privilege ? "white" : "black",
-                }}
-              >
-                <ListItemButton onClick={() => setActivePrivilege(privilege)}>
-                  <input type="radio" checked={activePrivilege === privilege} />
-                  <ListItemText>{privilege.privilegeName}</ListItemText>
-                </ListItemButton>
-              </ListItem>
-            ))}
-            <ListItem style={{ backgroundColor: "white" }}>
-              <TextField
-                size="small"
-                variant="standard"
-                placeholder="New Privilege Name"
-                value={newPrivilegeName}
-                onChange={(event: any) => setNewPrivilegeName(event.target.value)}
-              ></TextField>
-              <Button
-                onClick={() => createNewPrivilege()}
-                style={{ marginLeft: 50, width: 100, backgroundColor: "blue", maxWidth: 100, color: "white" }}
-              >
-                Add
-              </Button>
-            </ListItem>
-            <ListItem style={{ backgroundColor: "white" }}>
-              <label style={{ color: "red", marginLeft: 50 }}>{invalidPrivilegeNameMessage}</label>
-            </ListItem>
-          </List>
-        </div>
+    <div style={{ display: "flex" }}>
+      <ListView
+        listHeader={"Privileges"}
+        listItems={[
+          {
+            key: "no-item",
+            render: (item: any) => <Button variant="text">{item.title}</Button>,
+            title: (
+              <div style={{ display: "flex", padding: 5 }}>
+                <AddCircleOutlineIcon style={{ marginRight: 5 }} />
+              </div>
+            ),
+          },
+          ...allPrivileges,
+        ]}
+      />
+      <div style={{ justifyContent: "center" }}>
+        <div>&lt;</div>
+        <div>&lt;&lt;</div>
       </div>
+      <ListView
+        listHeader={"Privileges"}
+        listItems={[
+          {
+            key: "no-item",
+            render: (item: any) => <Button variant="text">{item.title}</Button>,
+            title: (
+              <div style={{ display: "flex", padding: 5 }}>
+                <AddCircleOutlineIcon style={{ marginRight: 5 }} />
+              </div>
+            ),
+          },
+          ...allPrivileges,
+        ]}
+      />
     </div>
   );
 };

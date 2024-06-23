@@ -95,7 +95,7 @@ const Navbar = () => {
       <button className="toggle-button" onClick={() => dispatch(setNavbarExpanded(!navbarExpanded))}>
         <MenuIcon />
       </button>
-      <h2 className={`navbar-title ${navbarExpanded ? "" : "collapsed"}`}>Swiss Bank</h2>
+      <h2 className={`navbar-title ${navbarExpanded ? "" : "collapsed"}`}>&#36;wiss Bank</h2>
       <ul>
         {getActiveNavbarItems().map((navbarItem: any) => (
           <li key={navbarItem.title} title={navbarItem.label}>

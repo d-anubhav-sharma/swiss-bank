@@ -81,7 +81,7 @@ const App = () => {
       <ProgressItemsBar />
       <Navbar />
       <div className="content">
-        <h1>Swiss Bank</h1>
+        <h1>&#36;wiss Bank</h1>
         <Elements stripe={stripePromise}>{getContentForApp()}</Elements>
       </div>
     </div>
