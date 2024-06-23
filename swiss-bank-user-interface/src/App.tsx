@@ -5,7 +5,7 @@ import RegisterForm from "./register-form/RegisterForm";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import About from "./about/About";
 import AccessManager from "./admin/AccessManager";
 import Admin from "./admin/Admin";
@@ -18,7 +18,6 @@ import PersonalBankingHome from "./personal-banking/home/PersonalBankingHome";
 import PersonalBankingAllTransactions from "./personal-banking/payment/AllTransactions";
 import PaymentForm from "./personal-banking/payment/PaymentForm";
 import Services from "./services/Services";
-import { setActiveContentPage } from "./store/slice";
 import AllUsersGrid from "./user-management/AllUsersGrid";
 import UserProfile from "./user-management/user-profile/UserProfile";
 import ProgressItemsBar from "./user-message-box/ProgressItemsBar";
@@ -30,18 +29,12 @@ const stripePromise = loadStripe(
 
 const App = () => {
   axios.defaults.withCredentials = true;
-  const dispatch = useDispatch();
   const { activeContentPage, isAdmin, loggedIn } = useSelector((state: any) => state.reducer);
-  const updateAndRender = (targetPage: any) => {
-    dispatch(setActiveContentPage(targetPage));
-    switch (targetPage) {
-      case "login":
-        return <LoginForm />;
-      case "home":
-        return <Home />;
-      default:
-        return <Home />;
-    }
+
+  const renderComponent = (component: any, condition: boolean, alternateComponent?: any) => {
+    if (condition) return component;
+    if (alternateComponent) return alternateComponent;
+    return <Home />;
   };
 
   const getContentForApp = () => {
@@ -51,7 +44,7 @@ const App = () => {
       case "register":
         return <RegisterForm />;
       case "services":
-        return loggedIn ? <Services /> : updateAndRender("login");
+        return renderComponent(<Services />, loggedIn, <LoginForm />);
       case "home":
         return <Home />;
       case "about":
@@ -59,25 +52,25 @@ const App = () => {
       case "contact":
         return <Contact />;
       case "admin":
-        return isAdmin ? <Admin /> : updateAndRender("login");
+        return renderComponent(<Admin />, isAdmin, <LoginForm />);
       case "users":
-        return isAdmin ? <AllUsersGrid /> : updateAndRender("home");
+        return renderComponent(<AllUsersGrid />, isAdmin, <LoginForm />);
       case "userprofile":
-        return loggedIn ? <UserProfile /> : updateAndRender("login");
+        return renderComponent(<UserProfile />, loggedIn, <LoginForm />);
       case "personalBanking":
-        return loggedIn ? <PersonalBankingHome /> : updateAndRender("login");
+        return renderComponent(<PersonalBankingHome />, loggedIn, <LoginForm />);
       case "personalBankingCreateAccount":
-        return loggedIn ? <PersonalBankingCreateAccount /> : updateAndRender("login");
+        return renderComponent(<PersonalBankingCreateAccount />, loggedIn, <LoginForm />);
       case "personalBankingAllTransactions":
-        return loggedIn ? <PersonalBankingAllTransactions /> : updateAndRender("login");
+        return renderComponent(<PersonalBankingAllTransactions />, loggedIn, <LoginForm />);
       case "payment":
-        return loggedIn ? <PaymentForm /> : updateAndRender("login");
+        return renderComponent(<PaymentForm />, loggedIn, <LoginForm />);
       case "access":
-        return isAdmin ? <AccessManager /> : updateAndRender("home");
+        return renderComponent(<AccessManager />, isAdmin, <LoginForm />);
       case "roleManager":
-        return isAdmin ? <RoleManager /> : updateAndRender("home");
+        return renderComponent(<RoleManager />, isAdmin, <LoginForm />);
       case "privilegeManager":
-        return isAdmin ? <PrivilegeManager /> : updateAndRender("home");
+        return renderComponent(<PrivilegeManager />, isAdmin, <LoginForm />);
       default:
         return <Home />;
     }
