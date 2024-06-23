@@ -38,4 +38,6 @@ public interface UserService {
 
 	public Mono<List<SimpleGrantedAuthority>> findAuthoritiesForUserName(String username);
 
+	public Mono<User> updateUser(User user);
+
 }

@@ -10,7 +10,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
-import com.swiss.bank.common.exceptions.InvalidUsernamePasswordException;
 import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.models.GetUserFromTokenRequest;
 import com.swiss.bank.user.service.models.LoginRequest;

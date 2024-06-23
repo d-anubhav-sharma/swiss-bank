@@ -127,4 +127,9 @@ public class UserServiceImpl implements UserService {
 				.collectList();
 				
 	}
+
+	@Override
+	public Mono<User> updateUser(User user) {
+		return userRepository.save(user);
+	}
 }

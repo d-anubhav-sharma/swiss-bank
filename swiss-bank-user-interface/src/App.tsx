@@ -2,25 +2,27 @@ import LoginForm from "./login-form/LoginForm";
 import Navbar from "./main-navbar/Navbar";
 import RegisterForm from "./register-form/RegisterForm";
 
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import About from "./about/About";
+import AccessManager from "./admin/AccessManager";
+import Admin from "./admin/Admin";
+import PrivilegeManager from "./admin/PrivilegeManager";
+import RoleManager from "./admin/RoleManager";
 import Contact from "./contact/Contact";
 import Home from "./home/Home";
+import PersonalBankingCreateAccount from "./personal-banking/account/PersonalBankingCreateAccount";
+import PersonalBankingHome from "./personal-banking/home/PersonalBankingHome";
+import PersonalBankingAllTransactions from "./personal-banking/payment/AllTransactions";
+import PaymentForm from "./personal-banking/payment/PaymentForm";
 import Services from "./services/Services";
-import UserMessageBox from "./user-message-box/UserMessageBox";
-import Admin from "./admin/Admin";
-import AllUsersGrid from "./user-management/AllUsersGrid";
 import { setActiveContentPage } from "./store/slice";
+import AllUsersGrid from "./user-management/AllUsersGrid";
 import UserProfile from "./user-management/user-profile/UserProfile";
 import ProgressItemsBar from "./user-message-box/ProgressItemsBar";
-import PersonalBankingHome from "./personal-banking/home/PersonalBankingHome";
-import PersonalBankingCreateAccount from "./personal-banking/account/PersonalBankingCreateAccount";
-import PaymentForm from "./personal-banking/payment/PaymentForm";
-import { Elements } from "@stripe/react-stripe-js";
-import { loadStripe } from "@stripe/stripe-js";
-import PersonalBankingAllTransactions from "./personal-banking/payment/AllTransactions";
-import AccessManager from "./admin/AccessManager";
+import UserMessageBox from "./user-message-box/UserMessageBox";
 
 const stripePromise = loadStripe(
   "pk_test_51PQ6l51kzQN5Vsox1un36EiFSRpYRchM18DD3tZCcVkTbd5IBI94J0JRWFgiWc9nlmaD3QBGH8iTiKxj4FxRv8wS00NcJaBk8R"
@@ -40,15 +42,6 @@ const App = () => {
       default:
         return <Home />;
     }
-  };
-
-  const getPaymentFormComponent = () => {
-    return (
-      <Elements stripe={stripePromise}>
-        <h1>Payment Form</h1>
-        <PaymentForm />
-      </Elements>
-    );
   };
 
   const getContentForApp = () => {
@@ -81,6 +74,10 @@ const App = () => {
         return loggedIn ? <PaymentForm /> : updateAndRender("login");
       case "access":
         return isAdmin ? <AccessManager /> : updateAndRender("home");
+      case "roleManager":
+        return isAdmin ? <RoleManager /> : updateAndRender("home");
+      case "privilegeManager":
+        return isAdmin ? <PrivilegeManager /> : updateAndRender("home");
       default:
         return <Home />;
     }
