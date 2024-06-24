@@ -1,6 +1,6 @@
 package com.swiss.bank.user.service.config;
 
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.web.server.ServerWebExchange;
@@ -14,10 +14,7 @@ public class NoPopupAuthenticationEntryPoint implements ServerAuthenticationEntr
 	@Override
 	public Mono<Void> commence(ServerWebExchange exchange, AuthenticationException ex) {
 		log.atInfo().log("Commence method: {}", ex.getMessage());
-		exchange.getResponse().setStatusCode(HttpStatusCode.valueOf(401));
+		exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
 		return exchange.getResponse().setComplete();
 	}
-
-	
-
 }
