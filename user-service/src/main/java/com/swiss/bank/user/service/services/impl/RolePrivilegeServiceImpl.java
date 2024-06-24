@@ -149,4 +149,68 @@ public class RolePrivilegeServiceImpl implements RolePrivilegeService{
 		.flatMap(Function.identity());
 	}
 
+	@Override
+	public Mono<Role> removeAllPriviliges(String roleName) {
+		return roleRepository
+				.findRoleByRoleName(roleName)
+				.switchIfEmpty(Mono.error(new IllegalArgumentException("Role doesn't exists")))
+		 		.map(role -> {
+					role.setPrivilegeIds(new ArrayList<>());
+					return roleRepository.save(role);
+				})
+		 		.flatMap(Function.identity());
+	}
+
+	@Override
+	public Mono<Role> addAllPrivilegesToRole(String roleName) {
+		return roleRepository
+			.findRoleByRoleName(roleName)
+			.zipWith(privilegeRepository
+					.findAll()
+					.map(Privilege::getId)
+					.collectList(), (role, privilegeIds) -> {
+				role.setPrivilegeIds(privilegeIds);
+				return roleRepository.save(role);
+			})
+			.flatMap(Function.identity());
+	}
+
+	@Override
+	public Mono<User> addAllRolesToUser(String username) {
+		return userService
+				.findUserByUsername(username)
+				.zipWith(roleRepository.findAll().map(Role::getId).collectList(), (user, roles) -> {
+					user.setRoleIds(roles);
+					return user;
+				})
+				.flatMap(user -> userService.updateUser(user));
+	}
+
+	@Override
+	public Mono<User> removeRoleFromUser(String username, String roleName) {
+		Mono<User> userMono = userService
+				.findUserByUsername(username)
+				.switchIfEmpty(Mono.error(new IllegalArgumentException("User doesn't exists")));
+		Mono<Role> roleMono = roleRepository
+				.findRoleByRoleName(roleName)
+				.switchIfEmpty(Mono.error(new IllegalArgumentException("Role doesn't exists")));
+		return userMono.zipWith(roleMono, (user, role) -> {
+			user.getRoleIds().remove(role.getId());
+			return userService.updateUser(user);
+		})
+		.flatMap(Function.identity());
+	}
+
+	@Override
+	public Mono<User> removeAllRoles(String username) {
+		return userService
+				.findUserByUsername(username)
+				.switchIfEmpty(Mono.error(new IllegalArgumentException("User doesn't exists")))
+				.map(user -> {
+					user.setRoleIds(new ArrayList<>());
+					return userService.updateUser(user);
+				})
+		.flatMap(Function.identity());
+	}
+
 }

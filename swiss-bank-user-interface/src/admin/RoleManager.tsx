@@ -1,31 +1,24 @@
-import { Button, List, ListItem, ListItemButton, ListItemText, TextField } from "@mui/material";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { Button, Dialog, DialogContent, DialogTitle, FormControl, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUserMessageBoxState } from "../store/slice";
+import ListView from "../utils/list-window/ListView";
 
 const RoleManager = () => {
   const USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
   const [allRolesPrivilegesList, setAllRolesPrivilegesList] = useState([]);
-  const [activeRole, setActiveRole] = useState("ADMIN");
-  const [activePrivilege, setActivePrivilege] = useState("ADMIN");
+  const [allPrivileges, setAllPrivileges] = useState([]);
+  const [activeRole, setActiveRole] = useState("");
   const [allRoles, setAllRoles] = useState([]);
   const [newRoleName, setNewRoleName] = useState("");
   const [invalidNewRoleNameMessage, setInvalidNewRoleNameMessage] = useState("");
-  const [invalidPrivilegeNameMessage, setInvalidPrivilegeNameMessage] = useState("");
-  const [privilegeToAdd, setPrivilegeToAdd] = useState("");
-
-  const navBlue = "#2c3e50";
-
-  const addPrivilegeToRole = () => {
-    if (!privilegeToAdd || !/^[A-Z_]{3,30}$/.test(privilegeToAdd)) {
-      setInvalidPrivilegeNameMessage("Invalid privilege name: " + privilegeToAdd);
-      return;
-    }
-    setInvalidPrivilegeNameMessage("");
-    axios.post(USER_SERVICE_BASE_URL + "/admin/access/roles/addPrivilege/" + activeRole + "/" + privilegeToAdd).then(
-      (role: any) => fetchAllRolesAndPrivileges(),
-      (error) => setInvalidPrivilegeNameMessage(error.response.data.message || error.message)
-    );
-  };
+  const [newRoleDialogOpen, setNewRoleDialogOpen] = useState(false);
+  const [privilegeAction, setPrivilegeAction] = useState({} as any);
+  const [activePrivilegeFromCurrentTab, setActivePrivilegeFromCurrentTab] = useState("");
+  const [activePrivilegeFromAvailableTab, setActivePrivilegeFromAvailableTab] = useState("");
+  const dispatch = useDispatch();
 
   const createNewRole = () => {
     if (!newRoleName || !/^[A-Z_]{3,30}$/.test(newRoleName)) {
@@ -33,105 +26,276 @@ const RoleManager = () => {
       return;
     }
     setInvalidNewRoleNameMessage("");
-    axios
-      .post(USER_SERVICE_BASE_URL + "/admin/access/roles/create/" + newRoleName)
-      .then((role: any) => fetchAllRolesAndPrivileges());
+    axios.post(USER_SERVICE_BASE_URL + "/admin/access/roles/create/" + newRoleName).then(
+      (role: any) => {
+        fetchAllRolesAndPrivileges();
+        setNewRoleName("");
+        setNewRoleDialogOpen(false);
+      },
+      (error) =>
+        dispatch(
+          setUserMessageBoxState({
+            visible: true,
+            level: "error",
+            message: error?.response?.data?.message || error.message,
+          })
+        )
+    );
   };
 
   const fetchAllRolesAndPrivileges = () => {
-    axios.get(USER_SERVICE_BASE_URL + "/admin/access/roles/all").then((rolesPrivilegesResponse) => {
-      setAllRolesPrivilegesList(rolesPrivilegesResponse.data);
-      setAllRoles(rolesPrivilegesResponse.data.map((rolePrivilege: any) => rolePrivilege.roleName).sort());
-    });
+    axios.get(USER_SERVICE_BASE_URL + "/admin/access/privileges/all").then(
+      (privilegesResponse) => {
+        setAllPrivileges(privilegesResponse.data.map((priv: any) => priv.privilegeName).flat());
+      },
+      (error) =>
+        dispatch(
+          setUserMessageBoxState({
+            visible: true,
+            level: "error",
+            message: error?.response?.data?.message || error.message,
+          })
+        )
+    );
+    axios.get(USER_SERVICE_BASE_URL + "/admin/access/roles/all").then(
+      (rolesPrivilegesResponse) => {
+        setAllRolesPrivilegesList(rolesPrivilegesResponse.data);
+        setAllRoles(
+          rolesPrivilegesResponse.data.map((rolePrivilege: any) => ({ title: rolePrivilege.roleName })).sort()
+        );
+      },
+      (error) =>
+        dispatch(
+          setUserMessageBoxState({
+            visible: true,
+            level: "error",
+            message: error?.response?.data?.message || error.message,
+          })
+        )
+    );
+  };
+
+  const renderNewRoleDialog = () => {
+    return (
+      <Dialog open={newRoleDialogOpen} sx={{ width: 600, left: 200 }}>
+        <DialogTitle>New Role</DialogTitle>
+        <FormControl>
+          <DialogContent style={{ display: "flex", flexDirection: "column", width: 400 }}>
+            Role Name
+            <TextField size="small" value={newRoleName} onChange={(event) => setNewRoleName(event.target.value)} />
+            <hr></hr>
+            Role Description
+            <TextField size="small" multiline rows={3} />
+          </DialogContent>
+          <div style={{ display: "flex", padding: 10 }}>
+            <Button size="small" type="reset" fullWidth onClick={() => setNewRoleDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button size="small" type="submit" variant="contained" fullWidth onClick={() => createNewRole()}>
+              Create
+            </Button>
+          </div>
+          <label style={{ color: "red", margin: 10 }}>{invalidNewRoleNameMessage}</label>
+        </FormControl>
+      </Dialog>
+    );
+  };
+
+  const handleSectionChange = (selectedItem: any) => {
+    if (typeof selectedItem === "string") setActiveRole(selectedItem);
+    else if (typeof selectedItem.title === "string") setActiveRole(selectedItem.title);
+    setActivePrivilegeFromCurrentTab("");
+  };
+
+  const getAllAvailablePrivileges = () => {
+    let alreadyAddedPrivilege = allRolesPrivilegesList
+      .filter((rolePriv: any) => rolePriv.roleName === activeRole)
+      .map((rolePriv: any) => rolePriv.privilegeNames)
+      .flat();
+    return allPrivileges
+      .filter((privName) => !alreadyAddedPrivilege.includes(privName))
+      .map((privName: string) => ({ title: privName }));
+  };
+
+  const getAllCurrentPrivileges = () => {
+    return allRolesPrivilegesList
+      .filter((rolePriv: any) => rolePriv.roleName === activeRole)
+      .map((rolePriv: any) => rolePriv.privilegeNames)
+      .flat()
+      .map((privName: string) => ({ title: privName }));
+  };
+
+  const removeSelectedPrivilege = () => {
+    axios
+      .delete(
+        USER_SERVICE_BASE_URL +
+          "/admin/access/roles/removePrivilege/" +
+          activeRole +
+          "/" +
+          activePrivilegeFromCurrentTab
+      )
+      .then(
+        (role: any) => {
+          fetchAllRolesAndPrivileges();
+          setNewRoleName("");
+          setNewRoleDialogOpen(false);
+        },
+        (error) =>
+          dispatch(
+            setUserMessageBoxState({
+              visible: true,
+              level: "error",
+              message: error?.response?.data?.message || error.message,
+            })
+          )
+      );
+  };
+
+  const removeAllPriviliges = () => {
+    axios.delete(USER_SERVICE_BASE_URL + "/admin/access/roles/removeAllPriviliges/" + activeRole).then(
+      (role: any) => {
+        fetchAllRolesAndPrivileges();
+        setNewRoleName("");
+        setNewRoleDialogOpen(false);
+      },
+      (error) =>
+        dispatch(
+          setUserMessageBoxState({
+            visible: true,
+            level: "error",
+            message: error?.response?.data?.message || error.message,
+          })
+        )
+    );
+  };
+
+  const addSelectedPrivilege = () => {
+    axios
+      .post(
+        USER_SERVICE_BASE_URL + "/admin/access/roles/addPrivilege/" + activeRole + "/" + activePrivilegeFromAvailableTab
+      )
+      .then(
+        (role: any) => fetchAllRolesAndPrivileges(),
+        (error) =>
+          dispatch(
+            setUserMessageBoxState({
+              visible: true,
+              level: "error",
+              message: error?.response?.data?.message || error.message,
+            })
+          )
+      );
+  };
+
+  const addAllPrivileges = () => {
+    axios.post(USER_SERVICE_BASE_URL + "/admin/access/roles/addAllPrivileges/" + activeRole).then(
+      (role: any) => fetchAllRolesAndPrivileges(),
+      (error) =>
+        dispatch(
+          setUserMessageBoxState({
+            visible: true,
+            level: "error",
+            message: error?.response?.data?.message || error.message,
+          })
+        )
+    );
   };
 
   useEffect(() => {
     fetchAllRolesAndPrivileges();
   }, []);
 
+  useEffect(() => {
+    console.log(getAllCurrentPrivileges(), getAllAvailablePrivileges());
+    setPrivilegeAction({
+      removeAllPrivilegesDisabled: getAllCurrentPrivileges().length === 0,
+      removePrivilegeDisabled: getAllCurrentPrivileges().length === 0 || !activePrivilegeFromCurrentTab,
+      addAllPrivilegesDisabled: getAllAvailablePrivileges().length === 0,
+      addPrivilegeDisabled: getAllAvailablePrivileges().length === 0 || !activePrivilegeFromAvailableTab,
+    });
+  }, [
+    activeRole,
+    allPrivileges,
+    allRolesPrivilegesList,
+    activePrivilegeFromCurrentTab,
+    activePrivilegeFromAvailableTab,
+  ]);
+
   return (
     <div>
+      {renderNewRoleDialog()}
       <h3>Roles Manager</h3>
       <div style={{ display: "flex" }}>
-        <div style={{ width: 400 }}>
-          <h5>Roles</h5>
-          <List style={{ backgroundColor: navBlue }} disablePadding>
-            {allRoles.map((role: string) => (
-              <ListItem
-                disablePadding
-                key={role}
-                style={{
-                  backgroundColor: activeRole === role ? navBlue : "white",
-                  color: activeRole === role ? "white" : "black",
-                }}
-              >
-                <ListItemButton onClick={() => setActiveRole(role)}>
-                  <input type="radio" checked={activeRole === role} />
-                  <ListItemText>{role}</ListItemText>
-                </ListItemButton>
-              </ListItem>
-            ))}
-            <ListItem style={{ backgroundColor: "white" }}>
-              <TextField
-                size="small"
-                variant="standard"
-                placeholder="New Role Name"
-                value={newRoleName}
-                onChange={(event: any) => setNewRoleName(event.target.value)}
-              ></TextField>
-              <Button
-                onClick={() => createNewRole()}
-                style={{ marginLeft: 50, width: 100, backgroundColor: "blue", maxWidth: 100, color: "white" }}
-              >
-                Add
+        <ListView
+          onSelectionChange={handleSectionChange}
+          searchEnabled={true}
+          listHeader={
+            <span>
+              {"Roles"}
+              <Button onClick={() => setNewRoleDialogOpen(true)}>
+                <AddCircleOutlineIcon />
               </Button>
-            </ListItem>
-            <ListItem style={{ backgroundColor: "white" }}>
-              <label style={{ color: "red", marginLeft: 50 }}>{invalidNewRoleNameMessage}</label>
-            </ListItem>
-          </List>
-        </div>
-        <div>
-          <h5>Privileges</h5>
-          <List style={{ backgroundColor: navBlue }} disablePadding>
-            {allRolesPrivilegesList
-              .filter((rolePriv: any) => rolePriv.roleName === activeRole)
-              .map((rolePriv: any) => rolePriv.privilegeNames)
-              .flat()
-              .map((privName: string) => (
-                <ListItem
-                  disablePadding
-                  key={privName}
-                  style={{
-                    backgroundColor: activePrivilege === privName ? navBlue : "white",
-                    color: activePrivilege === privName ? "white" : "black",
-                  }}
-                >
-                  <ListItemButton onClick={() => setActivePrivilege(privName)}>
-                    <input type="radio" checked={activePrivilege === privName} />
-                    <ListItemText>{privName}</ListItemText>
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            <ListItem style={{ backgroundColor: "white" }}>
-              <TextField
-                size="small"
-                variant="standard"
-                placeholder="Privilege to add"
-                value={privilegeToAdd}
-                onChange={(event: any) => setPrivilegeToAdd(event.target.value)}
-              ></TextField>
-              <Button
-                onClick={() => addPrivilegeToRole()}
-                style={{ marginLeft: 50, width: 100, backgroundColor: "blue", maxWidth: 100, color: "white" }}
-              >
-                Add
-              </Button>
-            </ListItem>
-            <ListItem style={{ backgroundColor: "white", color: "red" }}>
-              <label>{invalidPrivilegeNameMessage}</label>
-            </ListItem>
-          </List>
+            </span>
+          }
+          listItems={allRoles}
+        />
+        <div style={{ display: "flex", marginLeft: 100 }}>
+          <ListView
+            searchEnabled={true}
+            onSelectionChange={(item: any) => {
+              if (typeof item === "string") setActivePrivilegeFromAvailableTab(item);
+              if (typeof item.title === "string") setActivePrivilegeFromAvailableTab(item.title);
+            }}
+            listHeader={"Available Privileges"}
+            listItems={getAllAvailablePrivileges()}
+          />
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              margin: 20,
+              marginTop: "30%",
+              alignContent: "center",
+            }}
+          >
+            <Button
+              variant="contained"
+              disabled={privilegeAction.removePrivilegeDisabled}
+              onClick={() => removeSelectedPrivilege()}
+            >
+              &lt;
+            </Button>
+            <Button
+              variant="contained"
+              disabled={privilegeAction.removeAllPrivilegesDisabled}
+              onClick={() => removeAllPriviliges()}
+            >
+              &lt;&lt;
+            </Button>
+            <Button
+              variant="contained"
+              disabled={privilegeAction.addPrivilegeDisabled}
+              onClick={() => addSelectedPrivilege()}
+            >
+              &gt;
+            </Button>
+            <Button
+              variant="contained"
+              disabled={privilegeAction.addAllPrivilegesDisabled}
+              onClick={() => addAllPrivileges()}
+            >
+              &gt;&gt;
+            </Button>
+          </div>
+          <ListView
+            searchEnabled={true}
+            onSelectionChange={(item: any) => {
+              if (typeof item === "string") setActivePrivilegeFromCurrentTab(item);
+              if (typeof item.title === "string") setActivePrivilegeFromCurrentTab(item.title);
+            }}
+            listHeader={"Current  Privileges"}
+            listItems={getAllCurrentPrivileges()}
+          />
         </div>
       </div>
     </div>

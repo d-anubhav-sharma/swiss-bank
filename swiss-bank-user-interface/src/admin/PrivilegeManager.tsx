@@ -1,17 +1,15 @@
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import { Button, Dialog, DialogContent, DialogTitle, FormControl, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ListView from "../utils/list-window/ListView";
-import { Button, TextField } from "@mui/material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 const PrivilegeManager = () => {
   const USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
   const [allPrivileges, setAllPrivileges] = useState([]);
-  const [activePrivilege, setActivePrivilege] = useState("");
   const [newPrivilegeName, setNewPrivilegeName] = useState("");
   const [invalidPrivilegeNameMessage, setInvalidPrivilegeNameMessage] = useState("");
-
-  const navBlue = "#2c3e50";
+  const [newPrivilegeDialogOpen, setNewPrivilegeDialogOpen] = useState(false);
 
   const fetchAllPrivileges = () => {
     axios
@@ -28,51 +26,65 @@ const PrivilegeManager = () => {
     }
     setInvalidPrivilegeNameMessage("");
     axios.post(USER_SERVICE_BASE_URL + "/admin/access/privileges/create/" + newPrivilegeName).then(
-      (role: any) => fetchAllPrivileges(),
-      (error) => setInvalidPrivilegeNameMessage(error.response.data.message || error.message)
+      (role: any) => {
+        fetchAllPrivileges();
+        setNewPrivilegeDialogOpen(false);
+        setNewPrivilegeName("");
+      },
+      (error) => {
+        setInvalidPrivilegeNameMessage(error.response.data.message || error.message);
+      }
+    );
+  };
+
+  const renderNewPrivilegeDialog = () => {
+    return (
+      <Dialog open={newPrivilegeDialogOpen} sx={{ width: 600, left: 200 }}>
+        <DialogTitle>New privilege</DialogTitle>
+        <FormControl>
+          <DialogContent style={{ display: "flex", flexDirection: "column", width: 400 }}>
+            Privilege Name
+            <TextField
+              size="small"
+              value={newPrivilegeName}
+              onChange={(event) => setNewPrivilegeName(event.target.value)}
+            />
+            <hr></hr>
+            Privilege Description
+            <TextField size="small" multiline rows={3} />
+          </DialogContent>
+          <div style={{ display: "flex", padding: 10 }}>
+            <Button size="small" type="reset" fullWidth onClick={() => setNewPrivilegeDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button size="small" type="submit" variant="contained" fullWidth onClick={() => createNewPrivilege()}>
+              Create
+            </Button>
+          </div>
+          <label style={{ color: "red", margin: 10 }}>{invalidPrivilegeNameMessage}</label>
+        </FormControl>
+      </Dialog>
     );
   };
 
   useEffect(() => {
     fetchAllPrivileges();
   }, []);
-  console.log(allPrivileges);
   return (
     <div style={{ display: "flex" }}>
       <ListView
-        listHeader={"Privileges"}
-        listItems={[
-          {
-            key: "no-item",
-            render: (item: any) => <Button variant="text">{item.title}</Button>,
-            title: (
-              <div style={{ display: "flex", padding: 5 }}>
-                <AddCircleOutlineIcon style={{ marginRight: 5 }} />
-              </div>
-            ),
-          },
-          ...allPrivileges,
-        ]}
+        searchEnabled={true}
+        listHeader={
+          <span>
+            {"Privileges"}
+            <Button onClick={() => setNewPrivilegeDialogOpen(true)}>
+              <AddCircleOutlineIcon />
+            </Button>
+          </span>
+        }
+        listItems={allPrivileges}
       />
-      <div style={{ justifyContent: "center" }}>
-        <div>&lt;</div>
-        <div>&lt;&lt;</div>
-      </div>
-      <ListView
-        listHeader={"Privileges"}
-        listItems={[
-          {
-            key: "no-item",
-            render: (item: any) => <Button variant="text">{item.title}</Button>,
-            title: (
-              <div style={{ display: "flex", padding: 5 }}>
-                <AddCircleOutlineIcon style={{ marginRight: 5 }} />
-              </div>
-            ),
-          },
-          ...allPrivileges,
-        ]}
-      />
+      {renderNewPrivilegeDialog()}
     </div>
   );
 };

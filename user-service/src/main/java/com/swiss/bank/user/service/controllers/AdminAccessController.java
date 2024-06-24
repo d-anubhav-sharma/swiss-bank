@@ -1,5 +1,6 @@
 package com.swiss.bank.user.service.controllers;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,10 +44,24 @@ public class AdminAccessController {
 		return rolePrivilegeService.findAllUsers();
 	}
 	
-
 	@PostMapping("/users/addRole/{username}/{roleName}")
 	public Mono<User> addRoleToUser(@PathVariable String username, @PathVariable String roleName){
 		return rolePrivilegeService.addRoleToUser(username, roleName);
+	}
+	
+	@PostMapping("/users/addAllRoles/{username}")
+	public Mono<User> addAllRolesToUser(@PathVariable String username){
+		return rolePrivilegeService.addAllRolesToUser(username);
+	}
+
+	@DeleteMapping("/users/removeRole/{username}/{roleName}")
+	public Mono<User> removeRoleFromUser(@PathVariable String username, @PathVariable String roleName){
+		return rolePrivilegeService.removeRoleFromUser(username, roleName);
+	}
+
+	@DeleteMapping("/users/removeAllRoles/{username}")
+	public Mono<User> removeAllRoles(@PathVariable String username){
+		return rolePrivilegeService.removeAllRoles(username);
 	}
 	
 	@PostMapping("/roles/create/{roleName}")
@@ -57,6 +72,21 @@ public class AdminAccessController {
 	@PostMapping("/roles/addPrivilege/{roleName}/{privilegeName}")
 	public Mono<Role> addPrivilegeToRole(@PathVariable String roleName, @PathVariable String privilegeName){
 		return rolePrivilegeService.addPrivilegeToRole(roleName, privilegeName);
+	}
+
+	@PostMapping("/roles/addAllPrivileges/{roleName}")
+	public Mono<Role> addAllPrivilegesToRole(@PathVariable String roleName){
+		return rolePrivilegeService.addAllPrivilegesToRole(roleName);
+	}
+
+	@DeleteMapping("/roles/removePrivilege/{roleName}/{privilegeName}")
+	public Mono<Role> removePrivilegeFromRole(@PathVariable String roleName, @PathVariable String privilegeName){
+		return rolePrivilegeService.removePrivilegeFromRole(roleName, privilegeName);
+	}
+
+	@DeleteMapping("/roles/removeAllPriviliges/{roleName}")
+	public Mono<Role> removeAllPriviligesFromRole(@PathVariable String roleName){
+		return rolePrivilegeService.removeAllPriviliges(roleName);
 	}
 
 	@PostMapping("/privileges/create/{privilegeName}")

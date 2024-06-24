@@ -50,7 +50,6 @@ const PersonalBankingCreateAccount = () => {
   };
 
   const handlePaymentSuccess = (paymentSuccessResponse: any) => {
-    console.log(paymentSuccessResponse);
     dispatch(
       setUserMessageBoxState({
         message: "Payment success with id: " + paymentSuccessResponse?.paymentIntent?.id,
@@ -140,7 +139,7 @@ const PersonalBankingCreateAccount = () => {
             value={initialAmount}
             InputProps={{ startAdornment: <span>&#8377;</span> }}
             onChange={(event: any) => {
-              console.log(setInitialAmount(event.target.value));
+              setInitialAmount(event.target.value);
             }}
             error={initialAmount < 5000}
           ></TextField>

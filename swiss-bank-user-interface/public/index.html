@@ -59,22 +59,19 @@
       opacity: 0.2;
       height: 100vh;
       width: 100vw;
-      animation: horizontalMove 20s infinite linear;
+      margin-left: 20vw;
+      margin-top: 20vh;
       z-index: -10;
     }
     #bouncingCoinVideo video {
       width: 50%;
       height: 50%;
     }
-    @keyframes horizontalMove {
-      0% {
-        margin-left: -10vw;
-        margin-top: -10vh;
-      }
-      100% {
-        margin-left: 100vw;
-        margin-top: 100vh;
-      }
-    }
   </style>
+  <script>
+    window.onload = () => {
+      console.log("I am wondering how");
+      document.getElementById("bouncingCoinVideo").innerHTML = "";
+    };
+  </script>
 </html>

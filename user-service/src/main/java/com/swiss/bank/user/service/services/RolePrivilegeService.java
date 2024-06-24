@@ -29,5 +29,15 @@ public interface RolePrivilegeService {
 	Flux<Privilege> findAllPrivileges();
 
 	Mono<User> addRoleToUser(String username, String roleName);
+
+	Mono<Role> removeAllPriviliges(String roleName);
+
+	Mono<Role> addAllPrivilegesToRole(String roleName);
+
+	Mono<User> addAllRolesToUser(String username);
+
+	Mono<User> removeRoleFromUser(String username, String roleName);
+
+	Mono<User> removeAllRoles(String username);
 	
 }

@@ -22,4 +22,5 @@ public class Privilege {
 	@Nonnull
 	@Indexed(unique = true)
 	private String privilegeName;
+	private String privilegeDescription;
 }
