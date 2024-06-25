@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -21,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
+import com.swiss.bank.common.utils.DataUtil;
 import com.swiss.bank.user.service.repositories.PathPrivilegeMapperRepository;
 import com.swiss.bank.user.service.util.SwissConstants;
 
@@ -66,7 +68,7 @@ public class WebSecurityConfig {
 		Customizer<AuthorizeExchangeSpec> httpRequestCustomizer = exchange -> {
 			AuthorizeExchangeSpec permission = exchange
 					.pathMatchers(
-							"/auth/**",
+							"/admin/**",
 							"/webjars/swagger-ui/index.html",
 							"/webjars/swagger-ui/swagger-ui.css",
 							"/webjars/swagger-ui/index.css",
@@ -82,22 +84,23 @@ public class WebSecurityConfig {
 			pathPrivilegeMapperRepository
 				.findAllByCategory("user-service")
 				.doOnNext(pathPrivilegeMap -> {
-					if(pathPrivilegeMap.getMethod()!=null) {
+					HttpMethod method = DataUtil.getMethod(pathPrivilegeMap.getMethod());
+					if(method!=null) {
 						log.atInfo().log("Securing url: {} and method: {} with privilege: {}",
 								pathPrivilegeMap.getUrlPattern(),
-								pathPrivilegeMap.getMethod(),
-								pathPrivilegeMap.getPrivilege());
+								method,
+								pathPrivilegeMap.getPrivilegeName());
 						permission
-							.pathMatchers(pathPrivilegeMap.getMethod(), pathPrivilegeMap.getUrlPattern())
-							.hasAuthority(pathPrivilegeMap.getPrivilege());
+							.pathMatchers(method, pathPrivilegeMap.getUrlPattern())
+							.hasAuthority(pathPrivilegeMap.getPrivilegeName());
 					}
 					else {
 						log.atInfo().log("Securing url: {} with privilege: {}",
 								pathPrivilegeMap.getUrlPattern(),
-								pathPrivilegeMap.getPrivilege());
+								pathPrivilegeMap.getPrivilegeName());
 						permission
 							.pathMatchers(pathPrivilegeMap.getUrlPattern())
-							.hasAuthority(pathPrivilegeMap.getPrivilege());
+							.hasAuthority(pathPrivilegeMap.getPrivilegeName());
 					}
 				})
 				.subscribe();

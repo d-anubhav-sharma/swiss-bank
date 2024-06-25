@@ -2,6 +2,7 @@ package com.swiss.bank.user.service.services;
 
 import org.springframework.stereotype.Service;
 
+import com.swiss.bank.user.service.entities.PathPrivilegeMapper;
 import com.swiss.bank.user.service.entities.Privilege;
 import com.swiss.bank.user.service.entities.Role;
 import com.swiss.bank.user.service.entities.User;
@@ -39,5 +40,9 @@ public interface RolePrivilegeService {
 	Mono<User> removeRoleFromUser(String username, String roleName);
 
 	Mono<User> removeAllRoles(String username);
+
+	Flux<PathPrivilegeMapper> findAllPathPrivilegeMapper();
+
+	Mono<PathPrivilegeMapper> updatePathPrivilegeMapper(PathPrivilegeMapper pathPrivilegeMapper);
 	
 }

@@ -6,11 +6,13 @@ import java.util.function.Function;
 
 import org.springframework.stereotype.Service;
 
+import com.swiss.bank.user.service.entities.PathPrivilegeMapper;
 import com.swiss.bank.user.service.entities.Privilege;
 import com.swiss.bank.user.service.entities.Role;
 import com.swiss.bank.user.service.entities.User;
 import com.swiss.bank.user.service.models.RolePrivilegeResponse;
 import com.swiss.bank.user.service.models.UserAccessResponse;
+import com.swiss.bank.user.service.repositories.PathPrivilegeMapperRepository;
 import com.swiss.bank.user.service.repositories.PrivilegeRepository;
 import com.swiss.bank.user.service.repositories.RoleRepository;
 import com.swiss.bank.user.service.services.RolePrivilegeService;
@@ -25,14 +27,17 @@ public class RolePrivilegeServiceImpl implements RolePrivilegeService{
 	private RoleRepository roleRepository;
 	private PrivilegeRepository privilegeRepository;
 	private UserService userService;
+	private PathPrivilegeMapperRepository pathPrivilegeMapperRepository;
 	
 	public RolePrivilegeServiceImpl(
 			RoleRepository roleRepository,
 			PrivilegeRepository privilegeRepository,
-			UserService userService) {
+			UserService userService,
+			PathPrivilegeMapperRepository pathPrivilegeMapperRepository) {
 		this.roleRepository = roleRepository;
 		this.privilegeRepository = privilegeRepository;
 		this.userService = userService;
+		this.pathPrivilegeMapperRepository = pathPrivilegeMapperRepository;
 	}
 
 	@Override
@@ -211,6 +216,42 @@ public class RolePrivilegeServiceImpl implements RolePrivilegeService{
 					return userService.updateUser(user);
 				})
 		.flatMap(Function.identity());
+	}
+
+	@Override
+	public Flux<PathPrivilegeMapper> findAllPathPrivilegeMapper() {
+		Flux<PathPrivilegeMapper> pathPrivilegeMapperFlux = pathPrivilegeMapperRepository.findAll();
+		return privilegeRepository.findAll().map(privilege -> 
+			 pathPrivilegeMapperFlux
+				.filter(mapper -> mapper.getPrivilegeName()!=null && mapper.getPrivilegeName().equals(privilege.getPrivilegeName()))
+				.defaultIfEmpty(new PathPrivilegeMapper())
+				.map(mapper -> PathPrivilegeMapper
+							.builder()
+							.privilegeName(privilege.getPrivilegeName())
+							.category(mapper.getCategory())
+							.method(mapper.getMethod())
+							.urlPattern(mapper.getUrlPattern())
+							.build()
+				)
+			
+		)
+		.flatMap(Function.identity());
+	}
+
+	@Override
+	public Mono<PathPrivilegeMapper> updatePathPrivilegeMapper(PathPrivilegeMapper pathPrivilegeMapper) {
+		return pathPrivilegeMapperRepository
+			.findByPrivilegeName(pathPrivilegeMapper.getPrivilegeName())
+			.defaultIfEmpty(new PathPrivilegeMapper())
+			.map(mapper -> {
+				mapper.setCategory(pathPrivilegeMapper.getCategory());
+				mapper.setEnabled(true);
+				mapper.setMethod(pathPrivilegeMapper.getMethod());
+				mapper.setUrlPattern(pathPrivilegeMapper.getUrlPattern());
+				mapper.setPrivilegeName(pathPrivilegeMapper.getPrivilegeName());
+				return pathPrivilegeMapperRepository.save(mapper);
+			})
+			.flatMap(Function.identity());
 	}
 
 }

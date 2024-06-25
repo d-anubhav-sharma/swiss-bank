@@ -1,8 +1,9 @@
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { Button, Dialog, DialogContent, DialogTitle, FormControl, TextField } from "@mui/material";
+import { Button, Dialog, DialogContent, DialogTitle, FormControl, MenuItem, Select, TextField } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import ListView from "../utils/list-window/ListView";
+import "./PrivilegeManager.css";
 
 const PrivilegeManager = () => {
   const USER_SERVICE_BASE_URL = process.env.REACT_APP_BANKING_USER_SERVICE_BASE_URL;
@@ -10,13 +11,22 @@ const PrivilegeManager = () => {
   const [newPrivilegeName, setNewPrivilegeName] = useState("");
   const [invalidPrivilegeNameMessage, setInvalidPrivilegeNameMessage] = useState("");
   const [newPrivilegeDialogOpen, setNewPrivilegeDialogOpen] = useState(false);
+  const [activePrivilege, setActivePrivilege] = useState({} as any);
+  const [privilegeMap, setPrivilegeMap] = useState({} as any);
+  const [activePathPrivilegeMapper, setActivePathPrivilegeMapper] = useState({} as any);
 
   const fetchAllPrivileges = () => {
-    axios
-      .get(USER_SERVICE_BASE_URL + "/admin/access/privileges/all")
-      .then((privilegeResponse) =>
-        setAllPrivileges(privilegeResponse.data.map((priv: any) => ({ key: priv.id, title: priv.privilegeName })))
+    axios.get(USER_SERVICE_BASE_URL + "/admin/access/privileges/all").then((privilegeResponse) => {
+      setAllPrivileges(
+        privilegeResponse.data.map((priv: any) => ({
+          key: priv.id,
+          title: priv.privilegeName,
+        }))
       );
+      let localPrivilegeMap = {} as any;
+      privilegeResponse.data.forEach((priv: any) => (localPrivilegeMap[priv.privilegeName] = priv));
+      setPrivilegeMap({ ...localPrivilegeMap });
+    });
   };
 
   const createNewPrivilege = () => {
@@ -34,6 +44,52 @@ const PrivilegeManager = () => {
       (error) => {
         setInvalidPrivilegeNameMessage(error.response.data.message || error.message);
       }
+    );
+  };
+  const handleActivePathPrivilegeMapperChange = (event: any, field: string) => {
+    setActivePathPrivilegeMapper({ ...activePathPrivilegeMapper, [field]: event.target.value });
+  };
+
+  const handleSavePathPrivilegeMapper = () => {
+    axios.post(USER_SERVICE_BASE_URL + "/admin/access/privileges/update", activePathPrivilegeMapper).then(() => {
+      fetchAllPrivileges();
+    });
+  };
+
+  const renderPathPrivilegeMapperDialog = () => {
+    if (!activePrivilege || !activePrivilege.length) return null;
+    return (
+      <div style={{ padding: 200, paddingTop: 100, width: 300 }}>
+        <h3>{activePrivilege}</h3>
+        <hr />
+        <FormControl fullWidth>
+          <label className="form-label">URL Pattern</label>
+          <TextField
+            value={activePathPrivilegeMapper.urlPattern}
+            onChange={(event) => handleActivePathPrivilegeMapperChange(event, "urlPattern")}
+          ></TextField>
+          <label className="form-label">Method</label>
+          <Select
+            value={activePathPrivilegeMapper.method}
+            onChange={(event) => handleActivePathPrivilegeMapperChange(event, "method")}
+          >
+            <MenuItem value=""></MenuItem>
+            <MenuItem value="GET">GET</MenuItem>
+            <MenuItem value="POST">POST</MenuItem>
+            <MenuItem value="UPDATE">UPDATE</MenuItem>
+            <MenuItem value="DELETE">DELETE</MenuItem>
+          </Select>
+          <label className="form-label">Category</label>
+          <TextField
+            value={activePathPrivilegeMapper.category}
+            onChange={(event) => handleActivePathPrivilegeMapperChange(event, "category")}
+          ></TextField>
+          <label className="form-label"></label>
+          <Button type="submit" onClick={handleSavePathPrivilegeMapper} variant="contained">
+            Save
+          </Button>
+        </FormControl>
+      </div>
     );
   };
 
@@ -83,8 +139,13 @@ const PrivilegeManager = () => {
           </span>
         }
         listItems={allPrivileges}
+        onSelectionChange={(item: any) => {
+          setActivePrivilege(item);
+          setActivePathPrivilegeMapper({ urlPattern: "", method: "", category: "" });
+        }}
       />
       {renderNewPrivilegeDialog()}
+      {renderPathPrivilegeMapperDialog()}
     </div>
   );
 };

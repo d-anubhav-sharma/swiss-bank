@@ -1,7 +1,5 @@
 package com.swiss.bank.common.models;
 
-import org.springframework.http.HttpMethod;
-
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,9 +8,9 @@ import lombok.Data;
 public class PathPrivilegeMapper {
 
 	private String urlPattern;
-	private String privilege;
+	private String privilegeName;
 	private String category;
-	private HttpMethod method;
+	private String method;
 	private boolean enabled;
 	
 }

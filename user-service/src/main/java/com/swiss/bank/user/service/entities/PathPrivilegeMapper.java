@@ -2,7 +2,6 @@ package com.swiss.bank.user.service.entities;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.http.HttpMethod;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,9 +18,9 @@ public class PathPrivilegeMapper {
 	@Id
 	private String id;
 	private String urlPattern;
-	private String privilege;
+	private String privilegeName;
 	private String category;
-	private HttpMethod method;
+	private String method;
 	private boolean enabled;
 	
 }

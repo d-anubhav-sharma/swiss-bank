@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import com.swiss.bank.common.models.Role;
-
-import reactor.core.publisher.Mono;
 
 public class DataUtil{
 
@@ -54,6 +53,16 @@ public class DataUtil{
     }
 
 	private DataUtil() {}
+
+	public static HttpMethod getMethod(String method) {
+		if(method==null) return null;
+		try {
+			return HttpMethod.valueOf(method);
+		}
+		catch(Exception ex) {
+			return null;
+		}
+	}
 
 
 }
