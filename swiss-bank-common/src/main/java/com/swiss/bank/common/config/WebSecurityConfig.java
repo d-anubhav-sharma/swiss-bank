@@ -112,6 +112,7 @@ public class WebSecurityConfig {
 							.hasAuthority(pathPrivilegeMap.getPrivilegeName());
 					}
 				})
+				.doFinally(signal -> permission.anyExchange().authenticated())
 				.subscribe();
 		};
 		

@@ -68,7 +68,7 @@ public class WebSecurityConfig {
 		Customizer<AuthorizeExchangeSpec> httpRequestCustomizer = exchange -> {
 			AuthorizeExchangeSpec permission = exchange
 					.pathMatchers(
-							"/admin/**",
+							"/auth/**",
 							"/webjars/swagger-ui/index.html",
 							"/webjars/swagger-ui/swagger-ui.css",
 							"/webjars/swagger-ui/index.css",
@@ -103,6 +103,7 @@ public class WebSecurityConfig {
 							.hasAuthority(pathPrivilegeMap.getPrivilegeName());
 					}
 				})
+				.doFinally(signal -> permission.anyExchange().authenticated())
 				.subscribe();
 		};
 		
