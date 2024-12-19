@@ -5,7 +5,7 @@ COPY $APP_NAME/pom.xml .
 COPY $APP_NAME/src ./src
 COPY $APP_NAME/*jar .
 COPY swiss-bank-common/target/swiss-bank-common-0.0.1-SNAPSHOT.jar .
-
+## Please ignore : testing changes
 RUN mkdir -p ~/.m2/repository/com/shaan/swiss-bank-common/0.0.1-SNAPSHOT/
 RUN cp swiss-bank-common-0.0.1-SNAPSHOT.jar ~/.m2/repository/com/shaan/swiss-bank-common/0.0.1-SNAPSHOT/ 
 RUN ls -lrt ~/.m2/repository/com/shaan/swiss-bank-common/0.0.1-SNAPSHOT/
