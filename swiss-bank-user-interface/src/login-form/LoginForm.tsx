@@ -19,7 +19,7 @@ const LoginForm = () => {
       })
       .then(
         () => {
-          window.location.reload();
+          // window.location.reload();
         },
         (error) => {
           console.error(error);
